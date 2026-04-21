@@ -1,0 +1,1672 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard Hipótesis – Claro Colombia</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#E8001D; --red-lt:#FFEEF0; --red-md:#FFD0D5;
+  --bg:#F5F6F8;  --sur:#fff;       --sur2:#F9FAFB;
+  --bdr:#E4E7EC; --bdr2:#CBD0D8;
+  --txt:#111827; --txt2:#4B5563;   --mu:#9CA3AF;
+  --grn:#059669; --grn-lt:#D1FAE5;
+  --neg:#DC2626; --neg-lt:#FEE2E2;
+  --r1:#43A3B1; --r2:#EB626A; --r3:#E2B356; --r4:#9368B8; --r5:#558754;
+  /* ── Paleta CA corporativa Claro ─────── */
+  --ca-d:#6D6E71;  /* gris corporativo  */
+  --ca-q:#E8001D;  /* rojo Claro        */
+  --ca-f:#003087;  /* azul corporativo  */
+  /* ── CA Móvil ─────────────────────── */
+  --mca-d:#6D6E71;
+  --mca-e:#003087;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;}
+
+/* HEADER */
+header{background:var(--sur);border-bottom:3px solid var(--red);padding:0 32px;
+  display:flex;align-items:stretch;justify-content:space-between;
+  box-shadow:0 2px 10px rgba(0,0,0,.07);position:sticky;top:0;z-index:300;}
+.lz{padding:12px 20px 12px 0;border-right:1px solid var(--bdr);
+  display:flex;align-items:center;gap:8px;}
+.cw{font-family:'Nunito',sans-serif;font-size:30px;font-weight:900;
+  color:var(--red);letter-spacing:-1.5px;}
+.ci{width:27px;height:27px;background:var(--red);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ci svg{width:14px;height:14px;}
+.ht{padding:12px 0 12px 20px;}
+.ht h1{font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;}
+.ht p{font-size:10px;color:var(--mu);letter-spacing:1.5px;
+  text-transform:uppercase;margin-top:2px;}
+.hr{display:flex;align-items:center;gap:10px;padding:12px 0;}
+.chip{font-size:11px;font-weight:600;padding:5px 13px;border-radius:20px;}
+.c-red{color:var(--red);border:1.5px solid var(--red-md);background:var(--red-lt);}
+.c-blu{color:#003087;border:1.5px solid #BFDBFE;background:#EFF6FF;font-weight:700;}
+.rbg{font-size:10px;color:var(--mu);}
+
+/* TABS */
+.tabbar{background:var(--sur);border-bottom:2px solid var(--bdr);
+  padding:0 32px;display:flex;
+  position:sticky;top:61px;z-index:280;
+  box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.tbtn{padding:12px 28px;font-family:'Nunito',sans-serif;font-size:14px;
+  font-weight:800;color:var(--txt2);background:none;border:none;
+  cursor:pointer;border-bottom:3px solid transparent;
+  transition:color .15s,border-color .15s;
+  display:flex;align-items:center;gap:7px;white-space:nowrap;}
+.tbtn:hover{color:var(--red);}
+.tbtn.active{color:var(--red);border-bottom-color:var(--red);}
+.tbtn svg{width:15px;height:15px;}
+.tpane{display:none;}.tpane.active{display:block;}
+
+/* NAV STICKY */
+.navs{position:sticky;z-index:250;background:var(--bg);
+  padding:8px 32px 0;margin:0 -32px;
+  border-bottom:1px solid var(--bdr);
+  box-shadow:0 2px 6px rgba(0,0,0,.05);}
+.navb{display:flex;align-items:center;gap:8px;
+  padding-bottom:8px;flex-wrap:wrap;}
+.np{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;
+  border-radius:22px;font-family:'Nunito',sans-serif;font-size:12px;
+  font-weight:800;text-decoration:none;border:2px solid transparent;
+  transition:all .15s;}
+.np-n{background:#FFF0F3;color:#E8001D;border-color:#FFD0D5;}
+.np-n:hover{background:#E8001D;color:#fff;border-color:#E8001D;}
+.np-t{background:#FFF7ED;color:#C2410C;border-color:#FED7AA;}
+.np-t:hover{background:#EA580C;color:#fff;border-color:#EA580C;}
+.np-c{background:#EFF6FF;color:#003087;border-color:#BFDBFE;}
+.np-c:hover{background:#003087;color:#fff;border-color:#003087;}
+.np-i{background:#F0FDF4;color:#059669;border-color:#A7F3D0;}
+.np-i:hover{background:#059669;color:#fff;border-color:#059669;}
+.np-o{background:#FAF5FF;color:#7C3AED;border-color:#DDD6FE;}
+.np-o:hover{background:#7C3AED;color:#fff;border-color:#7C3AED;}
+.np svg{width:13px;height:13px;}
+
+/* TOOLBAR */
+.tb{background:var(--sur);border:1px solid var(--bdr);border-radius:8px;
+  padding:8px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  box-shadow:0 1px 3px rgba(0,0,0,.04);}
+.tbl{font-size:10px;color:var(--mu);letter-spacing:2px;
+  text-transform:uppercase;white-space:nowrap;}
+.tbs{width:1px;height:20px;background:var(--bdr);flex-shrink:0;}
+.fb,.rb{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;
+  border:1.5px solid var(--bdr);background:var(--sur2);color:var(--txt2);
+  font-family:'IBM Plex Sans',sans-serif;cursor:pointer;transition:all .14s;
+  white-space:nowrap;}
+.fb:hover,.fb.active,.rb:hover,.rb.active{
+  border-color:var(--red);color:var(--red);background:var(--red-lt);}
+.gb{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;
+  border:1.5px solid #BFDBFE;background:#EFF6FF;color:#003087;
+  font-family:'IBM Plex Sans',sans-serif;cursor:pointer;transition:all .14s;
+  white-space:nowrap;}
+.gb.active{background:#003087;color:#fff;border-color:#003087;}
+.gb:hover:not(.active){background:#DBEAFE;}
+.cr{display:flex;align-items:center;gap:5px;}
+.cr select{padding:4px 8px;border-radius:6px;border:1.5px solid var(--bdr);
+  font-size:11px;font-family:'IBM Plex Sans',sans-serif;
+  background:var(--sur);cursor:pointer;}
+.cr select:focus{outline:none;border-color:var(--red);}
+.cr span{font-size:11px;color:var(--mu);}
+
+/* SECTION DIVIDER */
+.sd{display:flex;align-items:center;gap:14px;margin:28px 0 16px;
+  padding:15px 20px;border-radius:10px;border-left:5px solid;}
+.sd-n{background:linear-gradient(90deg,#FFF0F3,transparent 80%);border-color:#E8001D;}
+.sd-t{background:linear-gradient(90deg,#FFF7ED,transparent 80%);border-color:#EA580C;}
+.sd-c{background:linear-gradient(90deg,#EFF6FF,transparent 80%);border-color:#003087;}
+.sd-i{background:linear-gradient(90deg,#F0FDF4,transparent 80%);border-color:#059669;}
+.si{width:38px;height:38px;border-radius:8px;display:flex;
+  align-items:center;justify-content:center;flex-shrink:0;}
+.sd-n .si{background:#E8001D;}.sd-t .si{background:#EA580C;}
+.sd-c .si{background:#003087;}.sd-i .si{background:#059669;}
+.si svg{width:19px;height:19px;}
+.stit{font-family:'Nunito',sans-serif;font-size:20px;font-weight:900;
+  letter-spacing:-.4px;}
+.sd-n .stit{color:#E8001D;}.sd-t .stit{color:#C2410C;}
+.sd-c .stit{color:#003087;}.sd-i .stit{color:#059669;}
+.ssub{font-size:10px;color:var(--mu);letter-spacing:1.2px;
+  text-transform:uppercase;margin-top:2px;}
+
+.sl{display:flex;align-items:center;gap:9px;margin:16px 0 11px;}
+.sl::before{content:'';width:4px;height:17px;background:var(--red);border-radius:2px;}
+.sl h2{font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;}
+.sl span{font-size:10px;color:var(--mu);letter-spacing:1.5px;text-transform:uppercase;}
+
+/* KPI CARDS */
+.kg{display:grid;gap:10px;margin-bottom:18px;}
+.kc{background:var(--sur);border:1px solid var(--bdr);border-radius:8px;
+  padding:14px 16px;position:relative;overflow:hidden;
+  box-shadow:0 1px 3px rgba(0,0,0,.04);transition:box-shadow .2s;}
+.kc:hover{box-shadow:0 4px 14px rgba(0,0,0,.09);}
+.kc::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.kc.r1::after{background:var(--r1);}.kc.r2::after{background:var(--r2);}
+.kc.r3::after{background:var(--r3);}.kc.r4::after{background:var(--r4);}
+.kc.r5::after{background:var(--r5);}
+.kr{font-family:'Nunito',sans-serif;font-size:9px;font-weight:900;
+  letter-spacing:3px;text-transform:uppercase;margin-bottom:9px;}
+.kc.r1 .kr{color:var(--r1);}.kc.r2 .kr{color:var(--r2);}
+.kc.r3 .kr{color:var(--r3);}.kc.r4 .kr{color:var(--r4);}
+.kc.r5 .kr{color:var(--r5);}
+.km{font-size:10px;color:var(--mu);margin-bottom:2px;}
+.kv{font-family:'Nunito',sans-serif;font-size:20px;font-weight:900;line-height:1.1;}
+.ks{font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;}
+.kd{font-size:10px;font-weight:600;margin-top:2px;}
+.kd.up{color:var(--neg);}.kd.dn{color:var(--grn);}
+.ksep{margin:8px 0 6px;border-top:1px solid var(--bdr);}
+
+/* CA TOTAL CARDS */
+.ctbar{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;}
+.ctc{background:var(--sur);border:1px solid var(--bdr);border-radius:8px;
+  padding:13px 16px;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+.ctl{font-size:10px;color:var(--mu);letter-spacing:1.2px;
+  text-transform:uppercase;margin-bottom:5px;}
+.ctr{display:flex;align-items:baseline;gap:10px;}
+.ctv{font-family:'Nunito',sans-serif;font-size:23px;font-weight:900;}
+.ctp{font-size:11px;color:var(--mu);}
+.ctd{font-size:11px;font-weight:700;margin-top:2px;}
+.ctd.up{color:var(--neg);}.ctd.dn{color:var(--grn);}
+.ctm{font-size:10px;color:var(--mu);margin-top:2px;}
+
+/* CHARTS */
+.gg {display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.gg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;}
+.gf{grid-column:1/-1;}
+.gc{background:var(--sur);border:1px solid var(--bdr);border-radius:8px;
+  padding:17px 20px;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+.gh{display:flex;justify-content:space-between;
+  align-items:flex-start;margin-bottom:11px;}
+.gt{font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;}
+.gsu{font-size:10px;color:var(--mu);margin-top:2px;
+  letter-spacing:1px;text-transform:uppercase;}
+.gtag{font-size:9px;padding:2px 9px;border-radius:20px;
+  background:var(--red-lt);color:var(--red);border:1px solid var(--red-md);
+  letter-spacing:1px;font-weight:700;white-space:nowrap;}
+.leg{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px;}
+.li{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--txt2);}
+.ld{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:11px;}
+th{padding:8px 10px;font-size:10px;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--mu);
+  border-bottom:2px solid var(--bdr);font-weight:700;
+  background:var(--sur2);text-align:left;}
+td{padding:9px 10px;border-bottom:1px solid var(--bdr);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--red-lt);}
+.bp{display:inline-block;padding:2px 7px;border-radius:20px;
+  font-size:9px;font-weight:700;background:var(--grn-lt);color:var(--grn);}
+.bn{display:inline-block;padding:2px 7px;border-radius:20px;
+  font-size:9px;font-weight:700;background:var(--neg-lt);color:var(--neg);}
+.bd{font-size:9px;font-weight:600;margin-left:3px;}
+.bd.up{color:var(--neg);}.bd.dn{color:var(--grn);}
+
+main{padding:0 32px 40px;max-width:1760px;margin:0 auto;}
+.ti{padding-top:18px;}
+
+/* ── ANÁLISIS TAB ─────────────────────────────────── */
+.corr-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+.corr-full{grid-column:1/-1;}
+.corr-bar-wrap{margin-bottom:8px;}
+.corr-bar-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;}
+.corr-bar-name{font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;color:var(--txt);}
+.corr-bar-val{font-family:'Nunito',sans-serif;font-size:12px;font-weight:900;}
+.corr-bar-track{height:22px;background:var(--sur2);border-radius:6px;overflow:hidden;border:1px solid var(--bdr);}
+.corr-bar-fill{height:100%;border-radius:6px;display:flex;align-items:center;padding-left:8px;
+  font-size:10px;font-weight:700;color:#fff;transition:width .6s ease;}
+.corr-badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:9px;
+  font-weight:700;margin-left:6px;letter-spacing:.5px;}
+.corr-badge.strong{background:#D1FAE5;color:#059669;}
+.corr-badge.moderate{background:#FEF3C7;color:#D97706;}
+.corr-badge.weak{background:#FEE2E2;color:#DC2626;}
+.corr-badge.vweak{background:#F3F4F6;color:#9CA3AF;}
+.corr-interp{font-size:10px;color:var(--mu);margin-top:2px;}
+.corr-table{width:100%;border-collapse:collapse;font-size:11px;margin-top:10px;}
+.corr-table th{padding:10px 12px;font-size:10px;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--mu);border-bottom:2px solid var(--bdr);font-weight:700;background:var(--sur2);text-align:left;}
+.corr-table td{padding:10px 12px;border-bottom:1px solid var(--bdr);}
+.corr-table tr:hover td{background:var(--red-lt);}
+.corr-table .bar-cell{min-width:160px;}
+.corr-table .mini-bar{height:14px;border-radius:4px;display:inline-block;vertical-align:middle;}
+.heat-cell{text-align:center;font-family:'Nunito',sans-serif;font-weight:800;
+  font-size:13px;border-radius:4px;padding:8px 10px!important;}
+.scatter-dot{}
+.sd-a{background:linear-gradient(90deg,#FAF5FF,transparent 80%);border-color:#7C3AED;}
+.sd-a .si{background:#7C3AED;}
+.sd-a .stit{color:#7C3AED;}
+</style>
+</head>
+<body id="top">
+
+<!-- HEADER -->
+<header>
+  <div style="display:flex;align-items:center;">
+    <div class="lz">
+      <span class="cw">Claro</span>
+      <div class="ci">
+        <svg viewBox="0 0 20 20" fill="none" stroke="white" stroke-width="2.8"
+             stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="4,11 8,15 16,6"/>
+        </svg>
+      </div>
+    </div>
+    <div class="ht">
+      <h1>Dashboard Hipótesis · Claro Colombia</h1>
+      <p>Indicadores Hogar &amp; Móvil · por región</p>
+    </div>
+  </div>
+  <div class="hr">
+    <span class="rbg">Generado: 20/04/2026 14:03</span>
+    <span class="chip c-blu" id="granChip">MENSUAL</span>
+    <span class="chip c-red" id="perChip">ENE-25 — ABR-26</span>
+  </div>
+</header>
+
+<!-- TABS -->
+<div class="tabbar">
+  <button class="tbtn active" onclick="switchTab('h',this)">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor"
+         stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 9.5L10 3l7 6.5V18H13v-4h-6v4H3z"/>
+    </svg>HOGAR
+  </button>
+  <button class="tbtn" onclick="switchTab('m',this)">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor"
+         stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="6" y="1" width="8" height="18" rx="2"/>
+      <circle cx="10" cy="16" r="1" fill="currentColor" stroke="none"/>
+    </svg>MÓVIL
+  </button>
+  <button class="tbtn" onclick="switchTab('o',this)">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor"
+         stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="10" cy="10" r="8"/>
+      <line x1="10" y1="6" x2="10" y2="10"/>
+      <line x1="10" y1="13" x2="10" y2="14"/>
+    </svg>OTROS IND.
+  </button>
+  <button class="tbtn" onclick="switchTab('a',this)">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor"
+         stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 17L7 10L11 13L17 3"/>
+      <circle cx="17" cy="3" r="1.5" fill="currentColor" stroke="none"/>
+      <circle cx="11" cy="13" r="1.5" fill="currentColor" stroke="none"/>
+      <circle cx="7" cy="10" r="1.5" fill="currentColor" stroke="none"/>
+    </svg>ANÁLISIS
+  </button>
+</div>
+
+<main>
+
+<!-- ═══════════════ TAB HOGAR ═══════════════ -->
+<div id="tab-h" class="tpane active"><div class="ti">
+
+  <div class="navs" id="hNav">
+    <div class="navb">
+      <a class="np np-n" href="#hn">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,14 7,9 11,13 18,5"/></svg>NPS
+      </a>
+      <a class="np np-t" href="#ht">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="10" width="3" height="8" rx="1"/><rect x="8.5" y="6" width="3" height="12" rx="1"/><rect x="15" y="2" width="3" height="16" rx="1"/></svg>TRF
+      </a>
+      <a class="np np-c" href="#hc">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 17v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="7" cy="7" r="4"/><path d="M17 17v-2a4 4 0 0 0-3-3.87"/><path d="M13 3.13a4 4 0 0 1 0 7.75"/></svg>CA
+      </a>
+    </div>
+    <div class="tb">
+      <span class="tbl">Región</span>
+      <button class="fb active" onclick="hFR('ALL',this)">Todas</button>
+      <button class="fb" onclick="hFR('R1',this)">R1</button>
+      <button class="fb" onclick="hFR('R2',this)">R2</button>
+      <button class="fb" onclick="hFR('R3',this)">R3</button>
+      <button class="fb" onclick="hFR('R4',this)">R4</button>
+      <button class="fb" onclick="hFR('R5',this)">R5</button>
+      <div class="tbs"></div>
+      <span class="tbl">Granularidad</span>
+      <button class="gb active" id="hBM" onclick="hSG('M',this)">Mensual</button>
+      <button class="gb"        id="hBQ" onclick="hSG('Q',this)">Trim. Móvil 3M</button>
+      <div class="tbs"></div>
+      <span class="tbl">Período</span>
+      <button class="rb" id="hR3" onclick="hSR(3,this)">Últ. 3</button>
+      <button class="rb" id="hR6" onclick="hSR(6,this)">Últ. 6</button>
+      <button class="rb active" id="hR0" onclick="hSR(0,this)">Todo</button>
+      <div class="cr">
+        <select id="hSF" onchange="hAC()"><option value="0">ene-25</option><option value="1">feb-25</option><option value="2">mar-25</option><option value="3">abr-25</option><option value="4">may-25</option><option value="5">jun-25</option><option value="6">jul-25</option><option value="7">ago-25</option><option value="8">sep-25</option><option value="9">oct-25</option><option value="10">nov-25</option><option value="11">dic-25</option><option value="12">ene-26</option><option value="13">feb-26</option><option value="14">mar-26</option></select>
+        <span>→</span>
+        <select id="hST" onchange="hAC()"><option value="0" >ene-25</option><option value="1" >feb-25</option><option value="2" >mar-25</option><option value="3" >abr-25</option><option value="4" >may-25</option><option value="5" >jun-25</option><option value="6" >jul-25</option><option value="7" >ago-25</option><option value="8" >sep-25</option><option value="9" >oct-25</option><option value="10" >nov-25</option><option value="11" >dic-25</option><option value="12" >ene-26</option><option value="13" >feb-26</option><option value="14" selected>mar-26</option></select>
+      </div>
+    </div>
+  </div>
+
+  <!-- NPS HOGAR -->
+  <div id="hn" class="sd sd-n">
+    <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3,17 8,11 13,15 21,6"/><polyline points="17,6 21,6 21,10"/></svg></div>
+    <div><div class="stit">NPS · Net Promoter Score</div><div class="ssub">Satisfacción del cliente · Nacional y regional</div></div>
+  </div>
+
+  <div class="gg3">
+    <div class="gc"><div class="gh"><div><div class="gt">NPS General Hogar</div><div class="gsu" id="hSbGen">Nacional · Mensual</div></div><span class="gtag">GENERAL</span></div><canvas id="hCGen" height="160"></canvas></div>
+    <div class="gc"><div class="gh"><div><div class="gt">NPS FTTH</div><div class="gsu" id="hSbFtth">Nacional · Mensual</div></div><span class="gtag">FTTH</span></div><canvas id="hCFtth" height="160"></canvas></div>
+    <div class="gc"><div class="gh"><div><div class="gt">NPS HFC</div><div class="gsu" id="hSbHfc">Nacional · Mensual</div></div><span class="gtag">HFC</span></div><canvas id="hCHfc" height="160"></canvas></div>
+  </div>
+  <div class="gg">
+    <div class="gc"><div class="gh"><div><div class="gt">NPS Red Neutra</div><div class="gsu" id="hSbNeutra">Nacional · Mensual</div></div><span class="gtag">RED NEUTRA</span></div><canvas id="hCNeutra" height="155"></canvas></div>
+    <div class="gc"><div class="gh"><div><div class="gt">NPS Red Propia</div><div class="gsu" id="hSbPropia">Nacional · Mensual</div></div><span class="gtag">RED PROPIA</span></div><canvas id="hCPropia" height="155"></canvas></div>
+  </div>
+
+  <div class="sl"><h2>NPS Hogar Regional</h2><span>Mensual / TM · por región</span></div>
+  <div class="gg" style="grid-template-columns:1fr;">
+    <div class="gc gf"><div class="gh"><div><div class="gt">NPS Hogar — Evolución por región</div><div class="gsu" id="hSbHReg">Mensual</div></div><span class="gtag">TENDENCIA</span></div><canvas id="hCHReg" height="90"></canvas></div>
+  </div>
+  <div class="kg" id="hKPI"></div>
+
+  <!-- TRF HOGAR -->
+  <div id="ht" class="sd sd-t">
+    <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="12" width="4" height="9" rx="1"/><rect x="10" y="7" width="4" height="14" rx="1"/><rect x="17" y="3" width="4" height="18" rx="1"/></svg></div>
+    <div><div class="stit">Incidentes TRF</div><div class="ssub">Volumen y ratio de resolución · por región</div></div>
+  </div>
+  <div class="gg"><div class="gc gf">
+    <div class="gh"><div><div class="gt">Incidentes TRF — Evolución</div><div class="gsu">Total por región</div></div><span class="gtag">INCIDENTES</span></div>
+    <div class="leg" id="hLegTRF"></div>
+    <canvas id="hCTRF" height="72"></canvas>
+  </div></div>
+  <div class="gg">
+    <div class="gc"><div class="gh"><div><div class="gt">TRF — Índice de Resolución</div><div class="gsu">Ratio por región</div></div><span class="gtag">TRF %</span></div><canvas id="hCTRFp" height="150"></canvas></div>
+    <div class="gc"><div class="gh"><div><div class="gt">Snapshot — Último período</div><div class="gsu">Comparativo vs anterior</div></div><span class="gtag">RESUMEN</span></div><table id="hSnap"></table></div>
+  </div>
+
+  <!-- CA HOGAR -->
+  <div id="hc" class="sd sd-c">
+    <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+    <div><div class="stit">Clientes Afectados (CA)</div><div class="ssub">Disponibilidad · QOE · FTTH</div></div>
+  </div>
+  <div class="ctbar" id="hCTBar"></div>
+  <div class="sl"><h2 id="hCTLbl">Totales CA — Evolución</h2><span id="hCTSub"></span></div>
+  <div class="gg" style="grid-template-columns:1fr;margin-bottom:14px;">
+    <div class="gc">
+      <div class="gh"><div><div class="gt">CA Total — Disp + QOE + FTTH</div><div class="gsu" id="hSbCTL">Suma por período</div></div><span class="gtag" style="background:#EFF6FF;color:#003087;border-color:#BFDBFE;">TOTAL CA</span></div>
+      <canvas id="hCCTL" height="70"></canvas>
+    </div>
+  </div>
+  <div class="gg3" style="margin-bottom:14px;">
+    <div class="gc"><div class="gh"><div><div class="gt">CA Disponibilidad — Total</div><div class="gsu" id="hSbCTD">Suma</div></div><span class="gtag" style="background:#F3F4F6;color:#6D6E71;border-color:#D1D5DB;">DISP</span></div><canvas id="hCCTD" height="150"></canvas></div>
+    <div class="gc"><div class="gh"><div><div class="gt">CA QOE — Total</div><div class="gsu" id="hSbCTQ">Suma</div></div><span class="gtag" style="background:var(--red-lt);color:var(--red);border-color:var(--red-md);">QOE</span></div><canvas id="hCCTQ" height="150"></canvas></div>
+    <div class="gc"><div class="gh"><div><div class="gt">CA FTTH — Total</div><div class="gsu" id="hSbCTF">Suma</div></div><span class="gtag" style="background:#EFF6FF;color:#003087;border-color:#BFDBFE;">FTTH</span></div><canvas id="hCCTF" height="150"></canvas></div>
+  </div>
+  
+
+  <!-- SNAPSHOT GLOBAL HOGAR -->
+  <div id="hSnapSec" class="sd sd-i" style="margin-top:28px;">
+    <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="3"/></svg></div>
+    <div><div class="stit">Snapshot Global — Hogar</div><div class="ssub">Resumen de todos los indicadores · último período</div></div>
+  </div>
+  <div class="gc" style="margin-bottom:36px;overflow-x:auto;">
+    <div class="gh"><div><div class="gt">Todos los indicadores por región</div><div class="gsu">Comparativo vs período anterior</div></div><span class="gtag">RESUMEN GLOBAL</span></div>
+    <table id="hSnapFull"></table>
+  </div>
+
+</div></div><!-- /tab-h -->
+
+<!-- ═══════════════ TAB OTROS INDICADORES ═══════════════ -->
+<div id="tab-o" class="tpane"><div class="ti">
+
+  <div class="navs" id="oNav">
+    <div class="navb">
+      <a class="np np-n" href="#on">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,14 7,9 11,13 18,5"/></svg>NPS FDS
+      </a>
+      <a class="np np-t" href="#ocr">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><polyline points="7,10 10,13 13,7"/></svg>CR Admin / Téc.
+      </a>
+      <a class="np np-c" href="#orec">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l2-2 4 4 8-8"/></svg>Rec. Fallas
+      </a>
+      <a class="np np-i" href="#osnap">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="14" height="14" rx="2"/><line x1="3" y1="8" x2="17" y2="8"/><line x1="8" y1="17" x2="8" y2="3"/></svg>Snapshot
+      </a>
+    </div>
+    <div class="tb">
+      <span class="tbl">Región</span>
+      <button class="fb active" onclick="oFR('ALL',this)">Todas</button>
+      <button class="fb" onclick="oFR('R1',this)">R1</button>
+      <button class="fb" onclick="oFR('R2',this)">R2</button>
+      <button class="fb" onclick="oFR('R3',this)">R3</button>
+      <button class="fb" onclick="oFR('R4',this)">R4</button>
+      <button class="fb" onclick="oFR('R5',this)">R5</button>
+      <div class="tbs"></div>
+      <span class="tbl">Granularidad</span>
+      <button class="gb active" id="oBM" onclick="oSG('M',this)">Mensual</button>
+      <button class="gb"        id="oBQ" onclick="oSG('Q',this)">Trim. Móvil 3M</button>
+      <div class="tbs"></div>
+      <span class="tbl">Período</span>
+      <button class="rb" id="oR3" onclick="oSR(3,this)">Últ. 3</button>
+      <button class="rb" id="oR6" onclick="oSR(6,this)">Últ. 6</button>
+      <button class="rb active" id="oR0" onclick="oSR(0,this)">Todo</button>
+      <div class="cr">
+        <select id="oSF" onchange="oAC()"><option value="0">ene-25</option><option value="1">feb-25</option><option value="2">mar-25</option><option value="3">abr-25</option><option value="4">may-25</option><option value="5">jun-25</option><option value="6">jul-25</option><option value="7">ago-25</option><option value="8">sep-25</option><option value="9">oct-25</option><option value="10">nov-25</option><option value="11">dic-25</option><option value="12">ene-26</option><option value="13">feb-26</option><option value="14">mar-26</option></select>
+        <span>→</span>
+        <select id="oST" onchange="oAC()"><option value="0" >ene-25</option><option value="1" >feb-25</option><option value="2" >mar-25</option><option value="3" >abr-25</option><option value="4" >may-25</option><option value="5" >jun-25</option><option value="6" >jul-25</option><option value="7" >ago-25</option><option value="8" >sep-25</option><option value="9" >oct-25</option><option value="10" >nov-25</option><option value="11" >dic-25</option><option value="12" >ene-26</option><option value="13" >feb-26</option><option value="14" selected>mar-26</option></select>
+      </div>
+    </div>
+  </div>
+
+  <!-- NPS FDS -->
+  <div id="on" class="sd sd-n">
+    <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3,17 8,11 13,15 21,6"/><polyline points="17,6 21,6 21,10"/></svg></div>
+    <div><div class="stit">FDS · Funcionamiento del servicio</div><div class="ssub">Nacional y regional · Hogar</div></div>
+  </div>
+  <div class="gg3" style="grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+    <div class="gc"><div class="gh"><div><div class="gt">NPS FDS General</div><div class="gsu" id="oSbFdsGen">Nacional · Mensual</div></div><span class="gtag">FDS GENERAL</span></div><canvas id="oCFdsGen" height="160"></canvas></div>
+    <div class="gc"><div class="gh"><div><div class="gt">NPS FDS TX — por región</div><div class="gsu" id="oSbFdsTx">Regional · Mensual</div></div><span class="gtag">FDS TX</span></div><canvas id="oCFdsTx" height="160"></canvas></div>
+  </div>
+
+  <!-- CR ADMINISTRATIVO / TÉCNICO -->
+  <div id="ocr" class="sd sd-t">
+    <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="9,12 12,15 16,9"/></svg></div>
+    <div><div class="stit">CR Administrativo &amp; CR Técnico</div><div class="ssub">Indicadores nacionales · Hogar</div></div>
+  </div>
+  <div class="gg" style="margin-bottom:14px;">
+    <div class="gc"><div class="gh"><div><div class="gt">CR Administrativo</div><div class="gsu" id="oSbCrA">Nacional · Mensual</div></div><span class="gtag" style="background:#FFF7ED;color:#C2410C;border-color:#FED7AA;">CR ADMIN</span></div><canvas id="oCCrA" height="160"></canvas></div>
+    <div class="gc"><div class="gh"><div><div class="gt">CR Técnico</div><div class="gsu" id="oSbCrT">Nacional · Mensual</div></div><span class="gtag" style="background:#FFF7ED;color:#C2410C;border-color:#FED7AA;">CR TÉC</span></div><canvas id="oCCrT" height="160"></canvas></div>
+  </div>
+
+  <!-- REC FALLAS -->
+  <div id="orec" class="sd sd-c">
+    <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l2-2 4 4 8-8"/><circle cx="12" cy="12" r="10"/></svg></div>
+    <div><div class="stit">Rec. Fallas — Afectación &amp; Degradación</div><div class="ssub">Recurrencia de fallas por región · Hogar</div></div>
+  </div>
+  <div class="gg" style="margin-bottom:14px;">
+    <div class="gc"><div class="gh"><div><div class="gt">Recurrencia General de Fallas Afectación</div><div class="gsu" id="oSbRecAfTot">Nacional · Mensual</div></div><span class="gtag" style="background:#EFF6FF;color:#003087;border-color:#BFDBFE;">REC AFECT TOTAL</span></div><canvas id="oCRecAfTot" height="155"></canvas></div>
+    <div class="gc"><div class="gh"><div><div class="gt">Recurrencia General de Fallas Degradación</div><div class="gsu" id="oSbRecDeTot">Nacional · Mensual</div></div><span class="gtag" style="background:#EFF6FF;color:#003087;border-color:#BFDBFE;">REC DEG TOTAL</span></div><canvas id="oCRecDeTot" height="155"></canvas></div>
+  </div>
+  <div class="gg" style="margin-bottom:14px;">
+    <div class="gc"><div class="gh"><div><div class="gt">Rec. Fallas Afectación — por región</div><div class="gsu" id="oSbRecAf">Regional · Mensual</div></div><span class="gtag" style="background:#EFF6FF;color:#003087;border-color:#BFDBFE;">REC AFECT.</span></div><canvas id="oCRecAf" height="155"></canvas></div>
+    <div class="gc"><div class="gh"><div><div class="gt">Rec. Fallas Degradación — por región</div><div class="gsu" id="oSbRecDe">Regional · Mensual</div></div><span class="gtag" style="background:#EFF6FF;color:#003087;border-color:#BFDBFE;">REC DEGRAD.</span></div><canvas id="oCRecDe" height="155"></canvas></div>
+  </div>
+
+  <!-- SNAPSHOT OTROS -->
+  <div id="osnap" class="sd sd-i">
+    <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="3"/></svg></div>
+    <div><div class="stit">Snapshot — Otros Indicadores</div><div class="ssub">Resumen regional · último período</div></div>
+  </div>
+  <div class="gc" style="margin-bottom:36px;overflow-x:auto;">
+    <div class="gh"><div><div class="gt">Otros indicadores por región</div><div class="gsu">Comparativo vs período anterior</div></div><span class="gtag">RESUMEN</span></div>
+    <table id="oSnap"></table>
+  </div>
+
+</div></div><!-- /tab-o -->
+<div id="tab-m" class="tpane"><div class="ti">
+
+  <div class="navs" id="mNav">
+    <div class="navb">
+      <a class="np np-n" href="#mn"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,14 7,9 11,13 18,5"/></svg>NPS</a>
+      <a class="np np-t" href="#mt"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="10" width="3" height="8" rx="1"/><rect x="8.5" y="6" width="3" height="12" rx="1"/><rect x="15" y="2" width="3" height="16" rx="1"/></svg>TRF</a>
+      <a class="np np-c" href="#mc"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 17v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="7" cy="7" r="4"/></svg>CA</a>
+      <a class="np np-i" href="#mi"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><polyline points="10,6 10,10 13,12"/></svg>ICR 5G</a>
+    </div>
+    <div class="tb">
+      <span class="tbl">Región</span>
+      <button class="fb active" onclick="mFR('ALL',this)">Todas</button>
+      <button class="fb" onclick="mFR('R1',this)">R1</button>
+      <button class="fb" onclick="mFR('R2',this)">R2</button>
+      <button class="fb" onclick="mFR('R3',this)">R3</button>
+      <button class="fb" onclick="mFR('R4',this)">R4</button>
+      <button class="fb" onclick="mFR('R5',this)">R5</button>
+      <div class="tbs"></div>
+      <span class="tbl">Granularidad</span>
+      <button class="gb active" id="mBM" onclick="mSG('M',this)">Mensual</button>
+      <button class="gb"        id="mBQ" onclick="mSG('Q',this)">Trim. Móvil 3M</button>
+      <div class="tbs"></div>
+      <span class="tbl">Período</span>
+      <button class="rb" id="mR3" onclick="mSR(3,this)">Últ. 3</button>
+      <button class="rb" id="mR6" onclick="mSR(6,this)">Últ. 6</button>
+      <button class="rb active" id="mR0" onclick="mSR(0,this)">Todo</button>
+      <div class="cr">
+        <select id="mSF" onchange="mAC()"><option value="0">ene-25</option><option value="1">feb-25</option><option value="2">mar-25</option><option value="3">abr-25</option><option value="4">may-25</option><option value="5">jun-25</option><option value="6">jul-25</option><option value="7">ago-25</option><option value="8">sep-25</option><option value="9">oct-25</option><option value="10">nov-25</option><option value="11">dic-25</option><option value="12">ene-26</option><option value="13">feb-26</option><option value="14">mar-26</option></select>
+        <span>→</span>
+        <select id="mST" onchange="mAC()"><option value="0" >ene-25</option><option value="1" >feb-25</option><option value="2" >mar-25</option><option value="3" >abr-25</option><option value="4" >may-25</option><option value="5" >jun-25</option><option value="6" >jul-25</option><option value="7" >ago-25</option><option value="8" >sep-25</option><option value="9" >oct-25</option><option value="10" >nov-25</option><option value="11" >dic-25</option><option value="12" >ene-26</option><option value="13" >feb-26</option><option value="14" selected>mar-26</option></select>
+      </div>
+    </div>
+  </div>
+
+  <!-- NPS MÓVIL -->
+  <div id="mn" class="sd sd-n">
+    <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3,17 8,11 13,15 21,6"/><polyline points="17,6 21,6 21,10"/></svg></div>
+    <div><div class="stit">NPS Móvil</div><div class="ssub">Pospago &amp; Prepago · Nacional y regional</div></div>
+  </div>
+  <div class="gg">
+    <div class="gc"><div class="gh"><div><div class="gt">NPS General Pospago</div><div class="gsu" id="mSbGPos">Nacional · Mensual</div></div><span class="gtag">GENERAL POS</span></div><canvas id="mCGPos" height="155"></canvas></div>
+    <div class="gc"><div class="gh"><div><div class="gt">NPS General Prepago</div><div class="gsu" id="mSbGPre">Nacional · Mensual</div></div><span class="gtag">GENERAL PRE</span></div><canvas id="mCGPre" height="155"></canvas></div>
+  </div>
+  <div class="sl"><h2>NPS Regional Pospago &amp; Prepago</h2><span>Mensual / TM por región</span></div>
+  <div class="gg">
+    <div class="gc"><div class="gh"><div><div class="gt">NPS Pospago por región</div><div class="gsu" id="mSbPos">Mensual</div></div><span class="gtag">NPS POS</span></div><canvas id="mCPos" height="150"></canvas></div>
+    <div class="gc"><div class="gh"><div><div class="gt">NPS Prepago por región</div><div class="gsu" id="mSbPre">Mensual</div></div><span class="gtag">NPS PRE</span></div><canvas id="mCPre" height="150"></canvas></div>
+  </div>
+  <div class="kg" id="mKPI"></div>
+
+  <!-- TRF MÓVIL -->
+  <div id="mt" class="sd sd-t">
+    <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="12" width="4" height="9" rx="1"/><rect x="10" y="7" width="4" height="14" rx="1"/><rect x="17" y="3" width="4" height="18" rx="1"/></svg></div>
+    <div><div class="stit">Incidentes TRF Móvil</div><div class="ssub">Volumen y ratio · por región</div></div>
+  </div>
+  <div class="gg"><div class="gc gf">
+    <div class="gh"><div><div class="gt">Incidentes TRF — Evolución</div><div class="gsu">Por región</div></div><span class="gtag">INCIDENTES</span></div>
+    <div class="leg" id="mLegTRF"></div>
+    <canvas id="mCTRF" height="72"></canvas>
+  </div></div>
+  <div class="gg">
+    <div class="gc"><div class="gh"><div><div class="gt">TRF — Índice de Resolución</div><div class="gsu">Ratio por región</div></div><span class="gtag">TRF %</span></div><canvas id="mCTRFp" height="150"></canvas></div>
+    <div class="gc"><div class="gh"><div><div class="gt">Snapshot — Último período</div><div class="gsu">Comparativo vs anterior</div></div><span class="gtag">RESUMEN</span></div><table id="mSnap"></table></div>
+  </div>
+
+  <!-- CA MÓVIL -->
+  <div id="mc" class="sd sd-c">
+    <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+    <div><div class="stit">Clientes Afectados Móvil</div><div class="ssub">Disponibilidad 4G · Desempeño</div></div>
+  </div>
+  <div class="ctbar" id="mCTBar"></div>
+  <div class="sl"><h2 id="mCTLbl">Totales CA Móvil — Evolución</h2><span id="mCTSub"></span></div>
+  <div class="gg" style="grid-template-columns:1fr;margin-bottom:14px;">
+    <div class="gc"><div class="gh"><div><div class="gt">CA Total — Dispo 4G + Desempeño</div><div class="gsu" id="mSbCTL">Suma</div></div><span class="gtag" style="background:#EFF6FF;color:#003087;border-color:#BFDBFE;">TOTAL CA</span></div><canvas id="mCCTL" height="70"></canvas></div>
+  </div>
+  <div class="gg" style="margin-bottom:14px;">
+    <div class="gc"><div class="gh"><div><div class="gt">CA Dispo. 4G — Total</div><div class="gsu" id="mSbCTD">Suma</div></div><span class="gtag" style="background:#F3F4F6;color:#6D6E71;border-color:#D1D5DB;">DISP 4G</span></div><canvas id="mCCTD" height="150"></canvas></div>
+    <div class="gc"><div class="gh"><div><div class="gt">CA Desempeño — Total</div><div class="gsu" id="mSbCTDe">Suma</div></div><span class="gtag" style="background:#EFF6FF;color:#003087;border-color:#BFDBFE;">DESEMP</span></div><canvas id="mCCTDe" height="150"></canvas></div>
+  </div>
+  
+
+  <!-- ICR 5G -->
+  <div id="mi" class="sd sd-i">
+    <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12,8 12,12 15,14"/></svg></div>
+    <div><div class="stit">ICR 5G</div><div class="ssub">Índice de Calidad Red 5G · Nacional</div></div>
+  </div>
+  <div class="gg" style="margin-bottom:36px;">
+    <div class="gc"><div class="gh"><div><div class="gt">ICR 5G — Evolución</div><div class="gsu">Nacional</div></div><span class="gtag" style="background:#F0FDF4;color:#059669;border-color:#A7F3D0;">ICR 5G</span></div><canvas id="mCICR" height="155"></canvas></div>
+    <div class="gc"><div class="gh"><div><div class="gt">Ofensores ICR 5G — Evolución</div><div class="gsu">Nacional</div></div><span class="gtag" style="background:#F0FDF4;color:#059669;border-color:#A7F3D0;">OFENSORES</span></div><canvas id="mCOfICR" height="155"></canvas></div>
+  </div>
+
+</div></div><!-- /tab-m -->
+
+<!-- ═══════════════ TAB ANÁLISIS ═══════════════ -->
+<div id="tab-a" class="tpane"><div class="ti">
+
+  <div class="navs" id="aNav">
+    <div class="navb">
+      <a class="np np-o" href="#arank">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="12" width="3" height="6" rx="1"/><rect x="8.5" y="7" width="3" height="11" rx="1"/><rect x="15" y="2" width="3" height="16" rx="1"/></svg>Ranking
+      </a>
+      <a class="np np-n" href="#atable">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="16" height="16" rx="2"/><line x1="2" y1="8" x2="18" y2="8"/><line x1="10" y1="2" x2="10" y2="18"/></svg>Tabla
+      </a>
+      <a class="np np-c" href="#ascatter">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="14" r="1.5"/><circle cx="8" cy="9" r="1.5"/><circle cx="12" cy="11" r="1.5"/><circle cx="15" cy="5" r="1.5"/></svg>Scatter
+      </a>
+      <a class="np np-i" href="#aheat">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="7" height="7" rx="1"/><rect x="11" y="2" width="7" height="7" rx="1"/><rect x="2" y="11" width="7" height="7" rx="1"/><rect x="11" y="11" width="7" height="7" rx="1"/></svg>Heatmap
+      </a>
+    </div>
+    <div class="tb">
+      <span class="tbl">Granularidad</span>
+      <button class="gb active" id="aBM" onclick="aSG('M',this)">Mensual</button>
+      <button class="gb"        id="aBQ" onclick="aSG('Q',this)">Trim. Móvil 3M</button>
+      <div class="tbs"></div>
+      <span class="tbl">Período</span>
+      <button class="rb" id="aR3" onclick="aSR(3,this)">Últ. 3</button>
+      <button class="rb" id="aR6" onclick="aSR(6,this)">Últ. 6</button>
+      <button class="rb active" id="aR0" onclick="aSR(0,this)">Todo</button>
+      <div class="cr">
+        <select id="aSF" onchange="aACC()"></select>
+        <span>→</span>
+        <select id="aST" onchange="aACC()"></select>
+      </div>
+    </div>
+  </div>
+
+  <!-- RANKING -->
+  <div id="arank" class="sd sd-a">
+    <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17L8 10L13 14L21 4"/><polyline points="17,4 21,4 21,8"/></svg></div>
+    <div><div class="stit">Ranking de Correlación — Hogar</div><div class="ssub">Indicadores vs NPS General Hogar · Pearson r</div></div>
+  </div>
+  <div class="corr-grid">
+    <div class="gc corr-full"><div class="gh"><div><div class="gt">Correlación con NPS General Hogar</div><div class="gsu" id="aSbRank">Pearson r · Mensual · Todos los períodos</div></div><span class="gtag" style="background:#FAF5FF;color:#7C3AED;border-color:#DDD6FE;">RANKING</span></div>
+      <canvas id="aCRank" height="110"></canvas>
+    </div>
+  </div>
+
+  <!-- TABLA RESUMEN -->
+  <div id="atable" class="sd sd-n">
+    <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg></div>
+    <div><div class="stit">Tabla de Estadísticas</div><div class="ssub">Coeficiente r · R² · Interpretación</div></div>
+  </div>
+  <div class="gc" style="margin-bottom:20px;overflow-x:auto;">
+    <div class="gh"><div><div class="gt">Resumen de correlación por indicador</div><div class="gsu" id="aSbTable">Mensual</div></div><span class="gtag">DETALLE</span></div>
+    <table class="corr-table" id="aCorrTable"></table>
+  </div>
+
+  <!-- SCATTER PLOTS -->
+  <div id="ascatter" class="sd sd-c">
+    <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="16" r="2"/><circle cx="10" cy="10" r="2"/><circle cx="14" cy="14" r="2"/><circle cx="18" cy="6" r="2"/></svg></div>
+    <div><div class="stit">Scatter Plots — Top 3 Correlaciones</div><div class="ssub">Diagrama de dispersión · Relación con NPS General</div></div>
+  </div>
+  <div class="corr-grid" style="grid-template-columns:1fr 1fr 1fr;">
+    <div class="gc"><div class="gh"><div><div class="gt" id="aScLbl1">—</div><div class="gsu" id="aScSub1">—</div></div><span class="gtag" style="background:#D1FAE5;color:#059669;border-color:#A7F3D0;">TOP 1</span></div><canvas id="aCSc1" height="180"></canvas></div>
+    <div class="gc"><div class="gh"><div><div class="gt" id="aScLbl2">—</div><div class="gsu" id="aScSub2">—</div></div><span class="gtag" style="background:#FEF3C7;color:#D97706;border-color:#FDE68A;">TOP 2</span></div><canvas id="aCSc2" height="180"></canvas></div>
+    <div class="gc"><div class="gh"><div><div class="gt" id="aScLbl3">—</div><div class="gsu" id="aScSub3">—</div></div><span class="gtag" style="background:#DBEAFE;color:#003087;border-color:#BFDBFE;">TOP 3</span></div><canvas id="aCSc3" height="180"></canvas></div>
+  </div>
+
+  <!-- HEATMAP COMPARATIVO -->
+  <div id="aheat" class="sd sd-i">
+    <div class="si"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg></div>
+    <div><div class="stit">Heatmap Comparativo</div><div class="ssub">Matriz de correlación cruzada entre todos los indicadores</div></div>
+  </div>
+  <div class="gc" style="margin-bottom:36px;overflow-x:auto;">
+    <div class="gh"><div><div class="gt">Correlación cruzada — Indicadores Hogar</div><div class="gsu" id="aSbHeat">Mensual</div></div><span class="gtag" style="background:#F0FDF4;color:#059669;border-color:#A7F3D0;">HEATMAP</span></div>
+    <table class="corr-table" id="aHeatmap"></table>
+  </div>
+
+</div></div><!-- /tab-a -->
+
+</main>
+
+<script>
+// ═══ DATOS ════════════════════════════════════════════════════════════════════
+const HM  = ["ene-25", "feb-25", "mar-25", "abr-25", "may-25", "jun-25", "jul-25", "ago-25", "sep-25", "oct-25", "nov-25", "dic-25", "ene-26", "feb-26", "mar-26", "abr-26"];   const HQ  = ["T ene-25", "T feb-25", "T mar-25", "T abr-25", "T may-25", "T jun-25", "T jul-25", "T ago-25", "T sep-25", "T oct-25", "T nov-25", "T dic-25", "T ene-26", "T feb-26", "T mar-26", "T abr-26"];
+const HD  = {"hIncTRF": {"R1": [917.0, 853.0, 983.0, 1025.0, 1038.0, 817.0, 879.0, 1078.0, 919.0, 875.0, 739.0, 549.0, 666.0, 681.0, 748.0, 431.0], "R2": [539.0, 562.0, 613.0, 574.0, 562.0, 525.0, 601.0, 547.0, 496.0, 500.0, 469.0, 509.0, 449.0, 463.0, 501.0, 233.0], "R3": [1020.0, 1247.0, 1326.0, 1274.0, 1196.0, 1091.0, 1031.0, 977.0, 1013.0, 1078.0, 880.0, 806.0, 887.0, 815.0, 816.0, 392.0], "R4": [2254.0, 2059.0, 2329.0, 2313.0, 2110.0, 1840.0, 1865.0, 1877.0, 1691.0, 1763.0, 1456.0, 1323.0, 1280.0, 1343.0, 1239.0, 649.0], "R5": [599.0, 623.0, 644.0, 589.0, 596.0, 600.0, 663.0, 608.0, 584.0, 703.0, 637.0, 626.0, 598.0, 559.0, 480.0, 296.0]}, "hTrf": {"R1": [0.8693, 0.8288, 0.881, 0.8351, 0.8372, 0.8543, 0.8817, 0.8191, 0.827, 0.8617, 0.9147, 0.8907, 0.9054, 0.9134, 0.9492, 0.9629], "R2": [0.7963, 0.7687, 0.7602, 0.7909, 0.7847, 0.8057, 0.797, 0.83, 0.8367, 0.842, 0.8294, 0.8448, 0.8597, 0.8661, 0.8723, 0.8369], "R3": [0.8257, 0.8083, 0.8137, 0.8289, 0.8035, 0.8634, 0.9069, 0.8762, 0.8736, 0.8609, 0.8943, 0.8821, 0.8782, 0.8896, 0.902, 0.9056], "R4": [0.8236, 0.7912, 0.7789, 0.8503, 0.8332, 0.869, 0.8531, 0.878, 0.8941, 0.89, 0.9038, 0.8957, 0.907, 0.9032, 0.9007, 0.923], "R5": [0.9283, 0.9101, 0.8696, 0.8829, 0.9211, 0.9033, 0.9065, 0.9441, 0.9247, 0.9189, 0.9231, 0.9425, 0.9465, 0.932, 0.9313, 0.9426]}, "hCaDisp": {"R1": [null, null, null, null, null, null, 25858.0, 36247.0, 30484.0, 27580.0, 29628.0, 19764.0, 13256.0, 26768.0, 22040.0, 4196.0], "R2": [null, null, null, null, null, null, 17377.0, 7427.0, 7327.0, 13947.0, 9678.0, 8912.0, 8552.0, 9615.0, 16076.0, 1791.0], "R3": [null, null, null, null, null, null, 14071.0, 12784.0, 26689.0, 24488.0, 15704.0, 10059.0, 14295.0, 16249.0, 24673.0, 5053.0], "R4": [null, null, null, null, null, null, 34803.0, 36841.0, 30194.0, 43413.0, 74277.0, 25412.0, 23585.0, 36669.0, 34948.0, 4978.0], "R5": [null, null, null, null, null, null, 18713.0, 11474.0, 11584.0, 17792.0, 10932.0, 7360.0, 4180.0, 25700.0, 10982.0, 10266.0]}, "hCaQoe": {"R1": [null, null, null, null, null, null, null, 61423.0, 63217.0, 54548.0, 48005.0, 25281.0, 24699.0, 29278.0, 25061.0, 25867.0], "R2": [null, null, null, null, null, null, null, 60748.0, 61868.0, 46667.0, 34980.0, 15863.0, 12734.0, 16384.0, 18927.0, 17878.0], "R3": [null, null, null, null, null, null, null, 69202.0, 73348.0, 56453.0, 41878.0, 20867.0, 16998.0, 18754.0, 20295.0, 20016.0], "R4": [null, null, null, null, null, null, null, 145062.0, 146135.0, 127740.0, 116062.0, 111445.0, 107444.0, 121604.0, 123482.0, 117579.0], "R5": [null, null, null, null, null, null, null, 44977.0, 45073.0, 39608.0, 31447.0, 18780.0, 19113.0, 21574.0, 20637.0, 19766.0]}, "hCaFtth": {"R1": [null, null, null, null, null, null, 725.0, 5450.0, 1310.0, 4022.0, 1697.0, 1576.0, 1025.0, 3016.0, 2537.0, 895.0], "R2": [null, null, null, null, null, null, 3248.0, 1414.0, 1605.0, 3093.0, 2217.0, 1873.0, 5845.0, 3683.0, 3124.0, 334.0], "R3": [null, null, null, null, null, null, 679.0, 2772.0, 4067.0, 1859.0, 1723.0, 2680.0, 3817.0, 1736.0, 1575.0, 2377.0], "R4": [null, null, null, null, null, null, 8348.0, 9075.0, 7171.0, 10618.0, 6337.0, 7591.0, 8615.0, 6560.0, 8429.0, 821.0], "R5": [null, null, null, null, null, null, 481.0, 914.0, 803.0, 266.0, 1126.0, 97.0, 704.0, 3061.0, 1526.0, 14.0]}, "hNpsHogar": {"R1": [0.2424, 0.1791, 0.303, 0.2727, 0.197, 0.2121, 0.1061, 0.2143, 0.2535, 0.2535, 0.0986, 0.169, 0.1831, 0.0845, 0.2254, 0.1489], "R2": [0.0598, 0.1368, 0.1552, 0.1379, 0.1552, -0.0086, 0.0517, 0.0862, 0.1121, 0.2155, 0.069, 0.0862, 0.1638, 0.0776, 0.2069, 0.1282], "R3": [-0.1197, 0.0603, 0.0345, 0.069, -0.0345, 0.0776, 0.0776, 0.1818, 0.0455, -0.0091, 0.1545, 0.1636, 0.1545, 0.1, 0.0, 0.0], "R4": [-0.1231, -0.1351, -0.0846, -0.0465, -0.0965, -0.0425, -0.027, -0.1379, -0.1124, -0.0736, -0.0504, -0.124, -0.0775, 0.0349, -0.031, 0.0526], "R5": [0.1467, 0.1579, -0.0779, 0.1772, -0.0897, 0.0769, 0.1538, 0.1923, 0.075, 0.175, 0.0, -0.05, 0.1875, 0.175, 0.175, 0.3818]}, "hNpsHogarTM": {"R1": [0.2576, 0.2261, 0.2412, 0.2513, 0.2576, 0.2273, 0.1717, 0.1782, 0.1932, 0.2406, 0.2019, 0.1737, 0.1502, 0.1455, 0.1643, 0.1534], "R2": [0.1171, 0.1026, 0.1171, 0.1433, 0.1494, 0.0948, 0.0661, 0.0431, 0.0833, 0.1379, 0.1322, 0.1236, 0.1063, 0.1092, 0.1494, 0.1387], "R3": [-0.0458, -0.0086, -0.0086, 0.0546, 0.023, 0.0374, 0.0402, 0.1111, 0.1012, 0.0727, 0.0636, 0.103, 0.1576, 0.1394, 0.0848, 0.0403], "R4": [-0.0782, -0.0962, -0.1142, -0.0888, -0.0759, -0.0619, -0.0553, -0.0693, -0.0925, -0.1081, -0.0788, -0.0827, -0.084, -0.0556, -0.0245, 0.0098], "R5": [0.0921, 0.1681, 0.0746, 0.0862, 0.0043, 0.0553, 0.047, 0.141, 0.1398, 0.1471, 0.0833, 0.0417, 0.0458, 0.1042, 0.1792, 0.2279]}, "hNpsFdsTx": {"R1": [0.2742, 0.1509, 0.1556, 0.2218, 0.2579, 0.2098, 0.2041, 0.1542, 0.2105, 0.219, 0.1928, 0.2598, 0.2126, 0.206, 0.2136, 0.2055], "R2": [0.0924, 0.1613, 0.0806, 0.1689, 0.1391, 0.1659, 0.1236, 0.021, 0.0659, 0.0891, 0.1711, 0.1246, 0.1295, 0.204, 0.1291, 0.1703], "R3": [0.0536, 0.0584, 0.0719, 0.0519, 0.1364, 0.1568, 0.0595, 0.109, 0.0851, 0.0849, 0.1401, 0.1409, 0.1991, 0.1643, 0.121, 0.1336], "R4": [0.0152, -0.0076, -0.0466, -0.0418, 0.0346, 0.0294, 0.0381, -0.0247, 0.0234, 0.0327, 0.0404, 0.0157, 0.0619, 0.0557, 0.0352, 0.0311], "R5": [0.1642, 0.1318, 0.0697, 0.0992, 0.1124, 0.0945, 0.08, 0.1399, 0.1043, 0.1515, 0.1055, 0.1556, 0.1556, 0.1172, 0.1007, 0.2524]}, "hRecFalAf": {"R1": [0.074405, 0.105087, 0.147333, 0.143414, 0.149662, 0.137543, 0.12035, 0.128892, 0.121182, 0.13748, 0.107635, 0.117461, 0.124098, 0.134734, 0.1402, 0.1189], "R2": [0.023216, 0.03857, 0.047124, 0.05031, 0.040841, 0.031878, 0.039067, 0.026352, 0.032746, 0.032583, 0.034725, 0.041544, 0.051814, 0.06584, 0.0504, 0.0239], "R3": [0.064788, 0.097713, 0.134356, 0.124851, 0.115037, 0.103189, 0.083758, 0.073241, 0.090902, 0.094553, 0.100679, 0.097303, 0.131357, 0.133223, 0.1245, 0.0721], "R4": [0.059829, 0.080401, 0.129149, 0.125348, 0.106023, 0.094069, 0.08648, 0.072074, 0.077336, 0.084172, 0.078996, 0.080603, 0.086173, 0.093967, 0.0843, 0.041], "R5": [0.051141, 0.071958, 0.116561, 0.115077, 0.104097, 0.109289, 0.119878, 0.083829, 0.090449, 0.098132, 0.102087, 0.095387, 0.088095, 0.10832, 0.1079, 0.0759]}, "hRecFalDe": {"R1": [0.039337, 0.052287, 0.048237, 0.046424, 0.048719, 0.079606, 0.033443, 0.03403, 0.044226, 0.030503, 0.017179, 0.019051, 0.022269, 0.023518, 0.0106, 0.0093], "R2": [0.012627, 0.015467, 0.015623, 0.007034, 0.005943, 0.006133, 0.005032, 0.005601, 0.005466, 0.003517, 0.003539, 0.003492, 0.001353, 0.00285, 0.001, 0.001], "R3": [0.030655, 0.039568, 0.034678, 0.033965, 0.027386, 0.017907, 0.012512, 0.024832, 0.02724, 0.023526, 0.013793, 0.010131, 0.009882, 0.017095, 0.0122, 0.0061], "R4": [0.010124, 0.013381, 0.013144, 0.012234, 0.012296, 0.010908, 0.007993, 0.005547, 0.009418, 0.004039, 0.002052, 0.001988, 0.001792, 0.003341, 0.0027, 0.0009], "R5": [0.02557, 0.030528, 0.036624, 0.020857, 0.024126, 0.021536, 0.01975, 0.017669, 0.02294, 0.022845, 0.006563, 0.006157, 0.006966, 0.008814, 0.0123, 0.0048]}, "hNpsGen": [null, null, null, null, null, null, null, null, 0.0205, 0.0583, 0.0299, 0.0063, 0.0693, 0.0772, 0.0724, 0.1311], "hNpsFtth": [null, null, null, null, null, null, null, null, 0.1957, 0.1477, 0.0739, 0.0426, 0.1523, 0.1497, 0.1134, 0.1951], "hNpsHfc": [null, null, null, null, null, null, null, null, -0.0092, 0.0309, 0.0131, -0.0089, 0.032, 0.0469, 0.0544, 0.1098], "hNpsFtthTM": [null, null, null, null, null, null, null, null, null, 0.1383, 0.125, 0.082, 0.0909, 0.1154, 0.1384, 0.1425], "hNpsHfcTM": [null, null, null, null, null, null, null, null, null, 0.0144, 0.0114, 0.0129, 0.0119, 0.0233, 0.0445, 0.0634], "hNpsNeutra": [null, null, null, null, null, null, null, null, null, 0.1053, 0.2273, 0.0, -0.1064, 0.0, -0.0714, 0.0], "hNpsPropia": [null, null, null, null, null, null, null, null, null, 0.1473, 0.0519, 0.0537, 0.2333, 0.1972, 0.1645, 0.2222], "hNpsNeutraTM": [null, null, null, null, null, null, null, null, null, 0.1212, 0.1803, 0.0875, 0.0, -0.0382, -0.0597, -0.0309], "hNpsPropTM": [null, null, null, null, null, null, null, null, null, 0.1419, 0.1155, 0.081, 0.1126, 0.161, 0.1982, 0.1885], "hNpsFdsGen": [0.1011, 0.0923, 0.0524, 0.0877, 0.1203, 0.1198, 0.0938, 0.0583, 0.0847, 0.102, 0.1222, 0.1205, 0.1369, 0.1388, 0.1079, 0.1428], "hRecFalAfTot": [0.052939, 0.075437, 0.111914, 0.108602, 0.096868, 0.087647, 0.082967, 0.069431, 0.075717, 0.081547, 0.078446, 0.080284, 0.089981, 0.10021, 0.0923, 0.0554], "hRecFalDeTot": [0.019361, 0.024745, 0.024214, 0.019552, 0.01892, 0.020095, 0.012441, 0.013512, 0.017114, 0.012556, 0.006624, 0.006139, 0.005982, 0.008434, 0.006, 0.0032], "hCrAdmin": [0.1922, 0.1824, 0.1822, 0.1747, 0.1859, 0.165, 0.1945, 0.1753, 0.1744, 0.1599, 0.1376, 0.1268, 0.1572, 0.1454, 0.1427, 0.1653], "hCrTec": [0.0906, 0.0823, 0.0968, 0.0977, 0.0994, 0.09, 0.1082, 0.0996, 0.0974, 0.0986, 0.0889, 0.0784, 0.093, 0.0868, 0.0809, 0.0698]};     const HDQ = {"hIncTRF": {"R1": [917.0, 1770.0, 2753.0, 2861.0, 3046.0, 2880.0, 2734.0, 2774.0, 2876.0, 2872.0, 2533.0, 2163.0, 1954.0, 1896.0, 2095.0, 1860.0], "R2": [539.0, 1101.0, 1714.0, 1749.0, 1749.0, 1661.0, 1688.0, 1673.0, 1644.0, 1543.0, 1465.0, 1478.0, 1427.0, 1421.0, 1413.0, 1197.0], "R3": [1020.0, 2267.0, 3593.0, 3847.0, 3796.0, 3561.0, 3318.0, 3099.0, 3021.0, 3068.0, 2971.0, 2764.0, 2573.0, 2508.0, 2518.0, 2023.0], "R4": [2254.0, 4313.0, 6642.0, 6701.0, 6752.0, 6263.0, 5815.0, 5582.0, 5433.0, 5331.0, 4910.0, 4542.0, 4059.0, 3946.0, 3862.0, 3231.0], "R5": [599.0, 1222.0, 1866.0, 1856.0, 1829.0, 1785.0, 1859.0, 1871.0, 1855.0, 1895.0, 1924.0, 1966.0, 1861.0, 1783.0, 1637.0, 1335.0]}, "hTrf": {"R1": [0.8693, 0.84905, 0.8597, 0.8483, 0.8511, 0.8422, 0.857733, 0.8517, 0.8426, 0.835933, 0.8678, 0.889033, 0.9036, 0.903167, 0.922667, 0.941833], "R2": [0.7963, 0.7825, 0.775067, 0.773267, 0.7786, 0.793767, 0.7958, 0.8109, 0.821233, 0.836233, 0.836033, 0.838733, 0.844633, 0.856867, 0.866033, 0.858433], "R3": [0.8257, 0.817, 0.8159, 0.816967, 0.815367, 0.831933, 0.857933, 0.882167, 0.885567, 0.870233, 0.876267, 0.8791, 0.884867, 0.8833, 0.889933, 0.899067], "R4": [0.8236, 0.8074, 0.7979, 0.8068, 0.8208, 0.850833, 0.851767, 0.8667, 0.875067, 0.887367, 0.895967, 0.8965, 0.902167, 0.901967, 0.903633, 0.908967], "R5": [0.9283, 0.9192, 0.902667, 0.887533, 0.8912, 0.902433, 0.9103, 0.917967, 0.9251, 0.929233, 0.922233, 0.928167, 0.937367, 0.940333, 0.9366, 0.9353]}, "hCaDisp": {"R1": [null, null, null, null, null, null, 25858.0, 62105.0, 92589.0, 94311.0, 87692.0, 76972.0, 62648.0, 59788.0, 62064.0, 53004.0], "R2": [null, null, null, null, null, null, 17377.0, 24804.0, 32131.0, 28701.0, 30952.0, 32537.0, 27142.0, 27079.0, 34243.0, 27482.0], "R3": [null, null, null, null, null, null, 14071.0, 26855.0, 53544.0, 63961.0, 66881.0, 50251.0, 40058.0, 40603.0, 55217.0, 45975.0], "R4": [null, null, null, null, null, null, 34803.0, 71644.0, 101838.0, 110448.0, 147884.0, 143102.0, 123274.0, 85666.0, 95202.0, 76595.0], "R5": [null, null, null, null, null, null, 18713.0, 30187.0, 41771.0, 40850.0, 40308.0, 36084.0, 22472.0, 37240.0, 40862.0, 46948.0]}, "hCaQoe": {"R1": [null, null, null, null, null, null, null, 61423.0, 124640.0, 179188.0, 165770.0, 127834.0, 97985.0, 79258.0, 79038.0, 80206.0], "R2": [null, null, null, null, null, null, null, 60748.0, 122616.0, 169283.0, 143515.0, 97510.0, 63577.0, 44981.0, 48045.0, 53189.0], "R3": [null, null, null, null, null, null, null, 69202.0, 142550.0, 199003.0, 171679.0, 119198.0, 79743.0, 56619.0, 56047.0, 59065.0], "R4": [null, null, null, null, null, null, null, 145062.0, 291197.0, 418937.0, 389937.0, 355247.0, 334951.0, 340493.0, 352530.0, 362665.0], "R5": [null, null, null, null, null, null, null, 44977.0, 90050.0, 129658.0, 116128.0, 89835.0, 69340.0, 59467.0, 61324.0, 61977.0]}, "hCaFtth": {"R1": [null, null, null, null, null, null, 725.0, 6175.0, 7485.0, 10782.0, 7029.0, 7295.0, 4298.0, 5617.0, 6578.0, 6448.0], "R2": [null, null, null, null, null, null, 3248.0, 4662.0, 6267.0, 6112.0, 6915.0, 7183.0, 9935.0, 11401.0, 12652.0, 7141.0], "R3": [null, null, null, null, null, null, 679.0, 3451.0, 7518.0, 8698.0, 7649.0, 6262.0, 8220.0, 8233.0, 7128.0, 5688.0], "R4": [null, null, null, null, null, null, 8348.0, 17423.0, 24594.0, 26864.0, 24126.0, 24546.0, 22543.0, 22766.0, 23604.0, 15810.0], "R5": [null, null, null, null, null, null, 481.0, 1395.0, 2198.0, 1983.0, 2195.0, 1489.0, 1927.0, 3862.0, 5291.0, 4601.0]}, "hNpsHogar": {"R1": [0.2424, 0.21075, 0.2415, 0.2516, 0.257567, 0.227267, 0.171733, 0.1775, 0.1913, 0.240433, 0.201867, 0.1737, 0.150233, 0.145533, 0.164333, 0.152933], "R2": [0.0598, 0.0983, 0.117267, 0.1433, 0.149433, 0.094833, 0.0661, 0.0431, 0.083333, 0.137933, 0.1322, 0.123567, 0.106333, 0.1092, 0.149433, 0.137567], "R3": [-0.1197, -0.0297, -0.0083, 0.0546, 0.023, 0.037367, 0.040233, 0.112333, 0.101633, 0.072733, 0.063633, 0.103, 0.157533, 0.139367, 0.084833, 0.033333], "R4": [-0.1231, -0.1291, -0.114267, -0.088733, -0.075867, -0.061833, -0.055333, -0.069133, -0.092433, -0.107967, -0.0788, -0.082667, -0.083967, -0.055533, -0.024533, 0.018833], "R5": [0.1467, 0.1523, 0.075567, 0.085733, 0.0032, 0.0548, 0.047, 0.141, 0.140367, 0.147433, 0.083333, 0.041667, 0.045833, 0.104167, 0.179167, 0.243933]}, "hNpsHogarTM": {"R1": [0.2576, 0.2261, 0.2412, 0.2513, 0.2576, 0.2273, 0.1717, 0.1782, 0.1932, 0.2406, 0.2019, 0.1737, 0.1502, 0.1455, 0.1643, 0.1534], "R2": [0.1171, 0.1026, 0.1171, 0.1433, 0.1494, 0.0948, 0.0661, 0.0431, 0.0833, 0.1379, 0.1322, 0.1236, 0.1063, 0.1092, 0.1494, 0.1387], "R3": [-0.0458, -0.0086, -0.0086, 0.0546, 0.023, 0.0374, 0.0402, 0.1111, 0.1012, 0.0727, 0.0636, 0.103, 0.1576, 0.1394, 0.0848, 0.0403], "R4": [-0.0782, -0.0962, -0.1142, -0.0888, -0.0759, -0.0619, -0.0553, -0.0693, -0.0925, -0.1081, -0.0788, -0.0827, -0.084, -0.0556, -0.0245, 0.0098], "R5": [0.0921, 0.1681, 0.0746, 0.0862, 0.0043, 0.0553, 0.047, 0.141, 0.1398, 0.1471, 0.0833, 0.0417, 0.0458, 0.1042, 0.1792, 0.2279]}, "hNpsFdsTx": {"R1": [0.2742, 0.21255, 0.193567, 0.1761, 0.211767, 0.229833, 0.223933, 0.189367, 0.1896, 0.194567, 0.207433, 0.223867, 0.221733, 0.226133, 0.210733, 0.208367], "R2": [0.0924, 0.12685, 0.111433, 0.136933, 0.129533, 0.157967, 0.142867, 0.1035, 0.070167, 0.058667, 0.1087, 0.128267, 0.141733, 0.1527, 0.1542, 0.1678], "R3": [0.0536, 0.056, 0.0613, 0.060733, 0.086733, 0.115033, 0.117567, 0.108433, 0.084533, 0.093, 0.103367, 0.121967, 0.160033, 0.1681, 0.161467, 0.139633], "R4": [0.0152, 0.0038, -0.013, -0.032, -0.017933, 0.0074, 0.034033, 0.014267, 0.012267, 0.010467, 0.032167, 0.0296, 0.039333, 0.044433, 0.050933, 0.040667], "R5": [0.1642, 0.148, 0.1219, 0.100233, 0.093767, 0.102033, 0.095633, 0.1048, 0.108067, 0.1319, 0.120433, 0.137533, 0.1389, 0.1428, 0.1245, 0.156767]}, "hRecFalAf": {"R1": [0.074405, 0.089746, 0.108942, 0.131945, 0.146803, 0.14354, 0.135852, 0.128928, 0.123475, 0.129185, 0.122099, 0.120859, 0.116398, 0.125431, 0.133011, 0.131278], "R2": [0.023216, 0.030893, 0.036303, 0.045335, 0.046092, 0.04101, 0.037262, 0.032432, 0.032722, 0.03056, 0.033351, 0.036284, 0.042694, 0.053066, 0.056018, 0.046713], "R3": [0.064788, 0.081251, 0.098952, 0.118973, 0.124748, 0.114359, 0.100661, 0.086729, 0.082634, 0.086232, 0.095378, 0.097512, 0.10978, 0.120628, 0.129693, 0.109941], "R4": [0.059829, 0.070115, 0.089793, 0.111633, 0.120173, 0.10848, 0.095524, 0.084208, 0.07863, 0.077861, 0.080168, 0.081257, 0.081924, 0.086914, 0.088147, 0.073089], "R5": [0.051141, 0.061549, 0.079887, 0.101199, 0.111912, 0.109488, 0.111088, 0.104332, 0.098052, 0.090803, 0.096889, 0.098535, 0.09519, 0.097267, 0.101438, 0.097373]}, "hRecFalDe": {"R1": [0.039337, 0.045812, 0.04662, 0.048983, 0.047793, 0.05825, 0.053923, 0.049026, 0.037233, 0.036253, 0.030636, 0.022244, 0.0195, 0.021613, 0.018796, 0.014473], "R2": [0.012627, 0.014047, 0.014572, 0.012708, 0.009533, 0.00637, 0.005703, 0.005589, 0.005366, 0.004861, 0.004174, 0.003516, 0.002795, 0.002565, 0.001734, 0.001617], "R3": [0.030655, 0.035112, 0.034967, 0.03607, 0.03201, 0.026419, 0.019268, 0.018417, 0.021528, 0.025199, 0.02152, 0.015817, 0.011269, 0.012369, 0.013059, 0.011798], "R4": [0.010124, 0.011752, 0.012216, 0.01292, 0.012558, 0.011813, 0.010399, 0.008149, 0.007653, 0.006335, 0.00517, 0.002693, 0.001944, 0.002374, 0.002611, 0.002314], "R5": [0.02557, 0.028049, 0.030907, 0.029336, 0.027202, 0.022173, 0.021804, 0.019652, 0.02012, 0.021151, 0.017449, 0.011855, 0.006562, 0.007312, 0.00936, 0.008638]}, "hNpsGen": [null, null, null, null, null, null, null, null, 0.0205, 0.0394, 0.036233, 0.0315, 0.035167, 0.050933, 0.072967, 0.093567], "hNpsFtth": [null, null, null, null, null, null, null, null, 0.1957, 0.1717, 0.1391, 0.088067, 0.0896, 0.114867, 0.138467, 0.152733], "hNpsHfc": [null, null, null, null, null, null, null, null, -0.0092, 0.01085, 0.0116, 0.0117, 0.012067, 0.023333, 0.044433, 0.070367], "hNpsFtthTM": [null, null, null, null, null, null, null, null, null, 0.1383, 0.125, 0.082, 0.0909, 0.1154, 0.1384, 0.1425], "hNpsHfcTM": [null, null, null, null, null, null, null, null, null, 0.0144, 0.0114, 0.0129, 0.0119, 0.0233, 0.0445, 0.0634], "hNpsNeutra": [null, null, null, null, null, null, null, null, null, 0.1053, 0.1663, 0.110867, 0.0403, -0.035467, -0.059267, -0.0238], "hNpsPropia": [null, null, null, null, null, null, null, null, null, 0.1473, 0.0996, 0.0843, 0.112967, 0.1614, 0.198333, 0.194633], "hNpsNeutraTM": [null, null, null, null, null, null, null, null, null, 0.1212, 0.1803, 0.0875, 0.0, -0.0382, -0.0597, -0.0309], "hNpsPropTM": [null, null, null, null, null, null, null, null, null, 0.1419, 0.1155, 0.081, 0.1126, 0.161, 0.1982, 0.1885], "hNpsFdsGen": [0.1011, 0.0967, 0.081933, 0.077467, 0.0868, 0.109267, 0.1113, 0.090633, 0.078933, 0.081667, 0.102967, 0.1149, 0.126533, 0.132067, 0.127867, 0.129833], "hRecFalAfTot": [0.052939, 0.064188, 0.080097, 0.098651, 0.105795, 0.097706, 0.089161, 0.080015, 0.076038, 0.075565, 0.07857, 0.080092, 0.082904, 0.090158, 0.094164, 0.082637], "hRecFalDeTot": [0.019361, 0.022053, 0.022773, 0.022837, 0.020895, 0.019522, 0.017152, 0.015349, 0.014356, 0.014394, 0.012098, 0.00844, 0.006248, 0.006852, 0.006805, 0.005878], "hCrAdmin": [0.1922, 0.1873, 0.1856, 0.179767, 0.180933, 0.1752, 0.1818, 0.178267, 0.1814, 0.169867, 0.1573, 0.141433, 0.140533, 0.143133, 0.148433, 0.151133], "hCrTec": [0.0906, 0.08645, 0.0899, 0.092267, 0.097967, 0.0957, 0.0992, 0.099267, 0.101733, 0.098533, 0.094967, 0.088633, 0.086767, 0.086067, 0.0869, 0.079167]};
+const MM  = ["ene-25", "feb-25", "mar-25", "abr-25", "may-25", "jun-25", "jul-25", "ago-25", "sep-25", "oct-25", "nov-25", "dic-25", "ene-26", "feb-26", "mar-26", "abr-26"];   const MQ  = ["T ene-25", "T feb-25", "T mar-25", "T abr-25", "T may-25", "T jun-25", "T jul-25", "T ago-25", "T sep-25", "T oct-25", "T nov-25", "T dic-25", "T ene-26", "T feb-26", "T mar-26", "T abr-26"];
+const MD  = {"mIncTRF": {"R1": [593.0, 595.0, 743.0, 790.0, 795.0, 704.0, 878.0, 851.0, 1022.0, 874.0, 734.0, 791.0, 725.0, 776.0, 810.0, 526.0], "R2": [407.0, 428.0, 456.0, 495.0, 474.0, 463.0, 568.0, 576.0, 588.0, 611.0, 524.0, 427.0, 457.0, 438.0, 476.0, 309.0], "R3": [558.0, 583.0, 674.0, 588.0, 515.0, 478.0, 423.0, 431.0, 550.0, 714.0, 612.0, 512.0, 610.0, 652.0, 734.0, 371.0], "R4": [247.0, 234.0, 230.0, 254.0, 252.0, 252.0, 230.0, 217.0, 281.0, 267.0, 329.0, 327.0, 349.0, 340.0, 442.0, 198.0], "R5": [791.0, 827.0, 1025.0, 1088.0, 1093.0, 1010.0, 1015.0, 734.0, 884.0, 997.0, 734.0, 752.0, 797.0, 747.0, 933.0, 666.0]}, "mTrf": {"R1": [0.747, 0.716, 0.755, 0.7646, 0.7421, 0.7557, 0.762, 0.819, 0.7769, 0.7918, 0.767, 0.7712, 0.76, 0.7629, 0.7778, 0.7738], "R2": [0.7518, 0.7173, 0.761, 0.7051, 0.6751, 0.6911, 0.7271, 0.7587, 0.7772, 0.8101, 0.8092, 0.8033, 0.7877, 0.774, 0.8361, 0.8058], "R3": [0.7724, 0.7479, 0.7389, 0.7432, 0.7301, 0.7448, 0.6974, 0.7865, 0.7927, 0.8081, 0.8219, 0.7891, 0.8049, 0.8098, 0.8052, 0.7844], "R4": [0.8178, 0.8248, 0.8261, 0.8386, 0.8611, 0.8254, 0.8783, 0.9539, 0.9039, 0.8914, 0.8754, 0.8777, 0.8997, 0.8853, 0.8982, 0.8788], "R5": [0.8357, 0.8319, 0.8283, 0.8208, 0.8188, 0.8366, 0.8276, 0.8583, 0.8654, 0.8746, 0.8801, 0.8816, 0.8657, 0.8795, 0.881, 0.8754]}, "mCaDisp4g": {"R1": [830573.0, 776820.0, 899805.0, 818479.0, 755577.0, 515925.0, 901789.0, 920599.0, 796506.0, 572803.0, 762701.0, 474009.0, 439141.0, 570612.0, 545444.0, 169398.0], "R2": [446112.0, 509529.0, 559741.0, 726471.0, 848597.0, 761886.0, 951277.0, 835328.0, 714166.0, 694898.0, 709797.0, 434559.0, 482084.0, 434048.0, 605530.0, 209721.0], "R3": [774830.0, 1033057.0, 1048480.0, 1001232.0, 936368.0, 825304.0, 766602.0, 942487.0, 789538.0, 985881.0, 728769.0, 624369.0, 875572.0, 692954.0, 792239.0, 256568.0], "R4": [359207.0, 379587.0, 185549.0, 280347.0, 362186.0, 322574.0, 244520.0, 215884.0, 208550.0, 249279.0, 254713.0, 149989.0, 155725.0, 154129.0, 209895.0, 37222.0], "R5": [889918.0, 871938.0, 955334.0, 733802.0, 852100.0, 785722.0, 746293.0, 1086750.0, 803047.0, 757116.0, 783452.0, 609626.0, 533219.0, 550942.0, 604843.0, 267910.0]}, "mCaDesemp": {"R1": [215362.0, 177127.0, 143946.0, 147539.0, 150024.0, 94021.0, 159251.0, 137947.0, 190236.0, 140296.0, 114973.0, 193108.0, 201873.0, 198654.0, 116508.0, 90641.0], "R2": [101756.0, 92966.0, 58694.0, 131436.0, 167332.0, 158641.0, 72712.0, 201094.0, 118948.0, 198053.0, 73578.0, 160324.0, 148009.0, 92672.0, 108999.0, 143935.0], "R3": [163696.0, 129893.0, 226753.0, 213321.0, 212709.0, 200602.0, 190583.0, 194382.0, 137321.0, 187351.0, 199220.0, 116236.0, 213709.0, 158948.0, 163160.0, 144054.0], "R4": [50267.0, 75456.0, 75091.0, 55785.0, 72361.0, 81314.0, 97380.0, 83318.0, 87272.0, 76945.0, 59686.0, 96264.0, 38918.0, 92893.0, 85086.0, 96819.0], "R5": [242781.0, 199426.0, 154014.0, 158767.0, 127982.0, 118439.0, 176098.0, 125402.0, 119229.0, 116528.0, 183177.0, 122803.0, 111735.0, 123051.0, 131092.0, 153368.0]}, "mNpsPos": {"R1": [0.3523, 0.3864, 0.3977, 0.2955, 0.3258, 0.3977, 0.5682, 0.2727, 0.2386, 0.3409, 0.3523, 0.375, 0.3523, 0.3636, 0.4432, null], "R2": [0.2439, 0.2683, 0.252, 0.1789, 0.3659, 0.3659, 0.2439, 0.1545, 0.2358, 0.3089, 0.2358, 0.3333, 0.3171, 0.3333, 0.4132, null], "R3": [0.386, 0.2895, 0.2982, 0.2281, 0.3246, 0.2105, 0.2281, 0.2719, 0.1842, 0.2105, 0.2368, 0.1667, 0.2281, 0.3158, 0.4035, null], "R4": [0.1856, 0.201, 0.1701, 0.1443, 0.1192, 0.2371, 0.366, 0.2062, 0.134, 0.0619, 0.1443, 0.2629, 0.2268, 0.0619, 0.2577, null], "R5": [0.1293, 0.1897, 0.069, 0.3534, 0.1638, 0.3276, 0.2069, 0.181, -0.0172, 0.1207, 0.1552, 0.2586, 0.2328, 0.1379, 0.181, null]}, "mNpsPosTM": {"R1": [null, null, 0.3788, 0.3598, 0.3396, 0.3396, 0.4302, 0.4129, 0.3598, 0.2841, 0.3106, 0.3561, 0.3598, 0.3636, 0.3864, null], "R2": [null, null, 0.2547, 0.2331, 0.2656, 0.3035, 0.3252, 0.2547, 0.2114, 0.2331, 0.2602, 0.2927, 0.2954, 0.3279, 0.3542, null], "R3": [null, null, 0.3246, 0.2719, 0.2836, 0.2544, 0.2544, 0.2368, 0.2281, 0.2222, 0.2105, 0.2047, 0.2105, 0.2368, 0.3158, null], "R4": [null, null, 0.1856, 0.1718, 0.1446, 0.167, 0.241, 0.2698, 0.2354, 0.134, 0.1134, 0.1564, 0.2113, 0.1838, 0.1821, null], "R5": [null, null, 0.1293, 0.204, 0.1954, 0.2816, 0.2328, 0.2385, 0.1236, 0.0948, 0.0862, 0.1782, 0.2155, 0.2098, 0.1839, null]}, "mNpsPre": {"R1": [0.5067, 0.4085, 0.4776, 0.4783, 0.3913, 0.4493, 0.5072, 0.5541, 0.3478, 0.5545, 0.3909, 0.4909, 0.4455, 0.4182, 0.4312, null], "R2": [0.3333, 0.3265, 0.4737, 0.4787, 0.3765, 0.4889, 0.3187, 0.3077, 0.3152, 0.3022, 0.43117, 0.3885, 0.3741, 0.2734, 0.5217, null], "R3": [0.2673, 0.299, 0.2737, 0.3402, 0.4271, 0.266, 0.3505, 0.2959, 0.2871, 0.3356, 0.226, 0.1986, 0.4041, 0.4589, 0.3014, null], "R4": [0.125, 0.1176, 0.0, 0.4118, 0.6111, 0.2667, 0.375, 0.3333, 0.3125, 0.2414, 0.3534, 0.4397, 0.2845, 0.3879, 0.4138, null], "R5": [0.2471, 0.2093, 0.2326, 0.2048, 0.2024, 0.2619, 0.1786, 0.1628, 0.1905, 0.4194, 0.2177, 0.1048, 0.379, 0.3548, 0.4194, null]}, "mNpsPreTM": {"R1": [null, null, 0.4772, 0.5061, 0.5152, 0.5061, 0.4667, 0.4909, 0.4636, 0.4879, 0.4394, 0.4788, 0.4424, 0.4515, 0.4316, null], "R2": [null, null, 0.3971, 0.4077, 0.4436, 0.4279, 0.4038, 0.387, 0.3525, 0.3309, 0.3573, 0.3741, 0.3981, 0.3453, 0.3894, null], "R3": [null, null, 0.3158, 0.3593, 0.3959, 0.3804, 0.3599, 0.2984, 0.3196, 0.3174, 0.3059, 0.2534, 0.2763, 0.3539, 0.3881, null], "R4": [null, null, 0.3276, 0.3266, 0.384, 0.3649, 0.3534, 0.319, 0.3046, 0.2529, 0.2787, 0.3448, 0.3592, 0.3707, 0.3621, null], "R5": [null, null, 0.2869, 0.328, 0.328, 0.3414, 0.3038, 0.2984, 0.2769, 0.3306, 0.3011, 0.2473, 0.2339, 0.2796, 0.3844, null]}, "mNpsGPos": [0.2457, 0.2535, 0.222, 0.2252, 0.2409, 0.2961, 0.3165, 0.2126, 0.1496, 0.1858, 0.2094, 0.274, 0.263, 0.2157, 0.3254, null], "mNpsGPre": [0.3685, 0.3181, 0.3874, 0.4441, 0.4031, 0.3591, 0.3654, 0.3402, 0.3165, 0.3654, 0.3213, 0.3165, 0.378, 0.378, 0.4155, null], "mIcr5g": [0.944369, 0.944444, 0.938841, 0.937882, 0.896928, 0.93147, 0.956434, 0.949853, 0.946774, 0.933842, 0.9513, 0.9547, 0.9573, 0.9503, 0.9578, 0.9677], "mOfIcr5g": [41.0, 48.0, 57.0, 61.0, 104.0, 76.0, 65.0, 85.0, 99.0, 130.0, 100.0, 93.0, 91.0, 107.0, 92.0, 71.0]};     const MDQ = {"mIncTRF": {"R1": [593.0, 1188.0, 1931.0, 2128.0, 2328.0, 2289.0, 2377.0, 2433.0, 2751.0, 2747.0, 2630.0, 2399.0, 2250.0, 2292.0, 2311.0, 2112.0], "R2": [407.0, 835.0, 1291.0, 1379.0, 1425.0, 1432.0, 1505.0, 1607.0, 1732.0, 1775.0, 1723.0, 1562.0, 1408.0, 1322.0, 1371.0, 1223.0], "R3": [558.0, 1141.0, 1815.0, 1845.0, 1777.0, 1581.0, 1416.0, 1332.0, 1404.0, 1695.0, 1876.0, 1838.0, 1734.0, 1774.0, 1996.0, 1757.0], "R4": [247.0, 481.0, 711.0, 718.0, 736.0, 758.0, 734.0, 699.0, 728.0, 765.0, 877.0, 923.0, 1005.0, 1016.0, 1131.0, 980.0], "R5": [791.0, 1618.0, 2643.0, 2940.0, 3206.0, 3191.0, 3118.0, 2759.0, 2633.0, 2615.0, 2615.0, 2483.0, 2283.0, 2296.0, 2477.0, 2346.0]}, "mTrf": {"R1": [0.747, 0.7315, 0.739333, 0.7452, 0.7539, 0.754133, 0.753267, 0.7789, 0.785967, 0.7959, 0.778567, 0.776667, 0.766067, 0.7647, 0.7669, 0.7715], "R2": [0.7518, 0.73455, 0.743367, 0.7278, 0.713733, 0.690433, 0.697767, 0.725633, 0.754333, 0.782, 0.798833, 0.807533, 0.800067, 0.788333, 0.799267, 0.8053], "R3": [0.7724, 0.76015, 0.753067, 0.743333, 0.7374, 0.739367, 0.7241, 0.7429, 0.758867, 0.795767, 0.807567, 0.806367, 0.8053, 0.801267, 0.806633, 0.7998], "R4": [0.8178, 0.8213, 0.8229, 0.829833, 0.841933, 0.8417, 0.854933, 0.885867, 0.912033, 0.9164, 0.890233, 0.8815, 0.884267, 0.887567, 0.8944, 0.887433], "R5": [0.8357, 0.8338, 0.831967, 0.827, 0.822633, 0.8254, 0.827667, 0.840833, 0.850433, 0.8661, 0.873367, 0.878767, 0.8758, 0.8756, 0.8754, 0.878633]}, "mCaDisp4g": {"R1": [830573.0, 1607393.0, 2507198.0, 2495104.0, 2473861.0, 2089981.0, 2173291.0, 2338313.0, 2618894.0, 2289908.0, 2132010.0, 1809513.0, 1675851.0, 1483762.0, 1555197.0, 1285454.0], "R2": [446112.0, 955641.0, 1515382.0, 1795741.0, 2134809.0, 2336954.0, 2561760.0, 2548491.0, 2500771.0, 2244392.0, 2118861.0, 1839254.0, 1626440.0, 1350691.0, 1521662.0, 1249299.0], "R3": [774830.0, 1807887.0, 2856367.0, 3082769.0, 2986080.0, 2762904.0, 2528274.0, 2534393.0, 2498627.0, 2717906.0, 2504188.0, 2339019.0, 2228710.0, 2192895.0, 2360765.0, 1741761.0], "R4": [359207.0, 738794.0, 924343.0, 845483.0, 828082.0, 965107.0, 929280.0, 782978.0, 668954.0, 673713.0, 712542.0, 653981.0, 560427.0, 459843.0, 519749.0, 401246.0], "R5": [889918.0, 1761856.0, 2717190.0, 2561074.0, 2541236.0, 2371624.0, 2384115.0, 2618765.0, 2636090.0, 2646913.0, 2343615.0, 2150194.0, 1926297.0, 1693787.0, 1689004.0, 1423695.0]}, "mCaDesemp": {"R1": [215362.0, 392489.0, 536435.0, 468612.0, 441509.0, 391584.0, 403296.0, 391219.0, 487434.0, 468479.0, 445505.0, 448377.0, 509954.0, 593635.0, 517035.0, 405803.0], "R2": [101756.0, 194722.0, 253416.0, 283096.0, 357462.0, 457409.0, 398685.0, 432447.0, 392754.0, 518095.0, 390579.0, 431955.0, 381911.0, 401005.0, 349680.0, 345606.0], "R3": [163696.0, 293589.0, 520342.0, 569967.0, 652783.0, 626632.0, 603894.0, 585567.0, 522286.0, 519054.0, 523892.0, 502807.0, 529165.0, 488893.0, 535817.0, 466162.0], "R4": [50267.0, 125723.0, 200814.0, 206332.0, 203237.0, 209460.0, 251055.0, 262012.0, 267970.0, 247535.0, 223903.0, 232895.0, 194868.0, 228075.0, 216897.0, 274798.0], "R5": [242781.0, 442207.0, 596221.0, 512207.0, 440763.0, 405188.0, 422519.0, 419939.0, 420729.0, 361159.0, 418934.0, 422508.0, 417715.0, 357589.0, 365878.0, 407511.0]}, "mNpsPos": {"R1": [0.3523, 0.36935, 0.3788, 0.359867, 0.339667, 0.339667, 0.430567, 0.412867, 0.359833, 0.284067, 0.3106, 0.356067, 0.359867, 0.363633, 0.386367, 0.4034], "R2": [0.2439, 0.2561, 0.254733, 0.233067, 0.2656, 0.303567, 0.325233, 0.254767, 0.2114, 0.233067, 0.260167, 0.292667, 0.2954, 0.3279, 0.354533, 0.37325], "R3": [0.386, 0.33775, 0.324567, 0.271933, 0.283633, 0.2544, 0.2544, 0.236833, 0.228067, 0.2222, 0.2105, 0.204667, 0.210533, 0.236867, 0.3158, 0.35965], "R4": [0.1856, 0.1933, 0.185567, 0.1718, 0.144533, 0.166867, 0.240767, 0.269767, 0.2354, 0.134033, 0.1134, 0.156367, 0.211333, 0.183867, 0.182133, 0.1598], "R5": [0.1293, 0.1595, 0.129333, 0.204033, 0.1954, 0.2816, 0.232767, 0.2385, 0.123567, 0.094833, 0.086233, 0.178167, 0.215533, 0.209767, 0.1839, 0.15945]}, "mNpsPosTM": {"R1": [null, null, 0.3788, 0.3598, 0.3396, 0.3396, 0.4302, 0.4129, 0.3598, 0.2841, 0.3106, 0.3561, 0.3598, 0.3636, 0.3864, null], "R2": [null, null, 0.2547, 0.2331, 0.2656, 0.3035, 0.3252, 0.2547, 0.2114, 0.2331, 0.2602, 0.2927, 0.2954, 0.3279, 0.3542, null], "R3": [null, null, 0.3246, 0.2719, 0.2836, 0.2544, 0.2544, 0.2368, 0.2281, 0.2222, 0.2105, 0.2047, 0.2105, 0.2368, 0.3158, null], "R4": [null, null, 0.1856, 0.1718, 0.1446, 0.167, 0.241, 0.2698, 0.2354, 0.134, 0.1134, 0.1564, 0.2113, 0.1838, 0.1821, null], "R5": [null, null, 0.1293, 0.204, 0.1954, 0.2816, 0.2328, 0.2385, 0.1236, 0.0948, 0.0862, 0.1782, 0.2155, 0.2098, 0.1839, null]}, "mNpsPre": {"R1": [0.5067, 0.4576, 0.464267, 0.4548, 0.449067, 0.439633, 0.449267, 0.503533, 0.4697, 0.485467, 0.431067, 0.478767, 0.442433, 0.451533, 0.431633, 0.4247], "R2": [0.3333, 0.3299, 0.377833, 0.4263, 0.442967, 0.448033, 0.3947, 0.371767, 0.313867, 0.308367, 0.349523, 0.373957, 0.397923, 0.345333, 0.389733, 0.39755], "R3": [0.2673, 0.28315, 0.28, 0.3043, 0.347, 0.344433, 0.347867, 0.304133, 0.311167, 0.3062, 0.2829, 0.2534, 0.276233, 0.353867, 0.388133, 0.38015], "R4": [0.125, 0.1213, 0.080867, 0.176467, 0.340967, 0.429867, 0.4176, 0.325, 0.340267, 0.295733, 0.302433, 0.344833, 0.3592, 0.3707, 0.362067, 0.40085], "R5": [0.2471, 0.2282, 0.229667, 0.215567, 0.213267, 0.223033, 0.2143, 0.2011, 0.1773, 0.257567, 0.275867, 0.2473, 0.233833, 0.279533, 0.3844, 0.3871]}, "mNpsPreTM": {"R1": [null, null, 0.4772, 0.5061, 0.5152, 0.5061, 0.4667, 0.4909, 0.4636, 0.4879, 0.4394, 0.4788, 0.4424, 0.4515, 0.4316, null], "R2": [null, null, 0.3971, 0.4077, 0.4436, 0.4279, 0.4038, 0.387, 0.3525, 0.3309, 0.3573, 0.3741, 0.3981, 0.3453, 0.3894, null], "R3": [null, null, 0.3158, 0.3593, 0.3959, 0.3804, 0.3599, 0.2984, 0.3196, 0.3174, 0.3059, 0.2534, 0.2763, 0.3539, 0.3881, null], "R4": [null, null, 0.3276, 0.3266, 0.384, 0.3649, 0.3534, 0.319, 0.3046, 0.2529, 0.2787, 0.3448, 0.3592, 0.3707, 0.3621, null], "R5": [null, null, 0.2869, 0.328, 0.328, 0.3414, 0.3038, 0.2984, 0.2769, 0.3306, 0.3011, 0.2473, 0.2339, 0.2796, 0.3844, null]}, "mNpsGPos": [0.2457, 0.2496, 0.2404, 0.233567, 0.229367, 0.254067, 0.2845, 0.275067, 0.226233, 0.182667, 0.1816, 0.223067, 0.2488, 0.2509, 0.268033, 0.27055], "mNpsGPre": [0.3685, 0.3433, 0.358, 0.3832, 0.411533, 0.4021, 0.375867, 0.3549, 0.3407, 0.3407, 0.3344, 0.3344, 0.3386, 0.3575, 0.3905, 0.39675], "mIcr5g": [0.944369, 0.944406, 0.942551, 0.940389, 0.92455, 0.922093, 0.928277, 0.945919, 0.95102, 0.94349, 0.943972, 0.946614, 0.954433, 0.9541, 0.955133, 0.9586], "mOfIcr5g": [41.0, 89.0, 146.0, 166.0, 222.0, 241.0, 245.0, 226.0, 249.0, 314.0, 329.0, 323.0, 284.0, 291.0, 290.0, 270.0]};
+// ══════════════════════════════════════════════════════════════════════════════
+
+const REGS=['R1','R2','R3','R4','R5'];
+const COL={R1:'#43A3B1',R2:'#EB626A',R3:'#E2B356',R4:'#9368B8',R5:'#558754'};
+
+// ── Paleta CA corporativa Claro (HOGAR y MOVIL) ───────────────────────────────
+const CA_D='#6D6E71'; // gris corporativo  → CA Disponibilidad / CA Dispo 4G
+const CA_Q='#E8001D'; // rojo Claro        → CA QOE
+const CA_F='#003087'; // azul corporativo  → CA FTTH / CA Desempeño
+
+// ── ESTADO HOGAR ──────────────────────────────────────────────────────────────
+let hR='ALL', hG='M', hF=0, hT=HM.length-1, hLR=0;
+let hC={};
+function hMn(){ return hG==='Q'?HQ:HM; }
+function hD() { return hG==='Q'?HDQ:HD; }
+function hRs(){ return hR==='ALL'?REGS:[hR]; }
+function hSM(){ return hMn().slice(hF,hT+1); }
+function hSl(a){ return (a||[]).slice(hF,hT+1); }
+
+// ── ESTADO MÓVIL ──────────────────────────────────────────────────────────────
+let mR='ALL', mG='M', mF=0, mT=MM.length-1, mLR=0;
+let mC={};
+function mMn(){ return mG==='Q'?MQ:MM; }
+function mD() { return mG==='Q'?MDQ:MD; }
+function mRs(){ return mR==='ALL'?REGS:[mR]; }
+function mSM(){ return mMn().slice(mF,mT+1); }
+function mSl(a){ return (a||[]).slice(mF,mT+1); }
+
+// ── CHART UTILS ───────────────────────────────────────────────────────────────
+function bO(yCb){
+  return {responsive:true,interaction:{mode:'index',intersect:false},
+    plugins:{legend:{display:false},tooltip:{backgroundColor:'#fff',
+      borderColor:'#E4E7EC',borderWidth:1,titleColor:'#111827',bodyColor:'#4B5563',
+      padding:10,boxPadding:3,
+      titleFont:{family:'IBM Plex Sans',weight:'700'},
+      bodyFont:{family:'IBM Plex Sans'}}},
+    scales:{x:{grid:{color:'#F3F4F6'},ticks:{color:'#9CA3AF',font:{family:'IBM Plex Sans',size:10}}},
+      y:{grid:{color:'#F3F4F6'},ticks:{color:'#9CA3AF',font:{family:'IBM Plex Sans',size:10},
+          callback:yCb||undefined}}}};
+}
+function wL(o){
+  return {...o,plugins:{...o.plugins,legend:{display:true,
+    labels:{color:'#4B5563',font:{family:'IBM Plex Sans',size:10},
+    boxWidth:8,padding:10}}}};
+}
+const pCb=v=>v+'%', kCb=v=>v>=1000?(v/1000).toFixed(0)+'K':v;
+function pct(v){return v!==null?+(v*100).toFixed(2):null;}
+function ln(id,lbl,ds,yCb){
+  return new Chart(document.getElementById(id),
+    {type:'line',data:{labels:lbl,datasets:ds},options:bO(yCb)});
+}
+function lds(lbl,data,c){
+  return {label:lbl,data,borderColor:c,backgroundColor:c+'15',
+    borderWidth:2.5,pointRadius:3,pointBackgroundColor:c,
+    tension:0.4,fill:true,spanGaps:true};
+}
+// Barra CA por región → colores corporativos Claro por región (no por tipo)
+function caRDS(r,data){
+  return {label:r,data,backgroundColor:COL[r]+'CC',
+    borderColor:COL[r],borderWidth:1,borderRadius:3};
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function lt(arr){
+  const s=arr||[];
+  let last=null,prev=null,fi=-1;
+  for(let i=s.length-1;i>=0;i--){
+    if(s[i]!==null){if(fi===-1){last=s[i];fi=i;}else{prev=s[i];break;}}
+  }
+  return {last,prev,delta:(last!==null&&prev!==null)?last-prev:null};
+}
+function dH(info,gwd,isP){   // big delta for KPI cards
+  if(info.delta===null)return '';
+  const c=gwd?(info.delta<0?'dn':'up'):(info.delta>0?'dn':'up');
+  const a=info.delta<0?'▼':'▲';
+  const v=isP?Math.abs(info.delta*100).toFixed(1)+'pp':Math.abs(info.delta).toLocaleString('es');
+  return `<div class="kd ${c}">${a} ${v} vs ant.</div>`;
+}
+function dB(c,p,isP,gwd){   // badge delta for table
+  if(c===null||p===null)return '';
+  const d=c-p,cl=gwd?(d<0?'dn':'up'):(d>0?'dn':'up');
+  const a=d<0?'▼':'▲';
+  const v=isP?Math.abs(d*100).toFixed(1)+'pp':Math.abs(d).toLocaleString('es');
+  return `<span class="bd ${cl}">${a}${v}</span>`;
+}
+
+// ── CA TOTAL CARDS ────────────────────────────────────────────────────────────
+function buildCTBar(cid,rsFn,slFn,configs,months){
+  const n=months.length;
+  function sr(src,i){
+    let s=0,any=false;
+    rsFn().forEach(r=>{const d=slFn(src[r]);if(d[i]!=null){s+=d[i];any=true;}});
+    return any?s:null;
+  }
+  document.getElementById(cid).innerHTML=configs.map(cfg=>{
+    let ci=-1,cv=null;
+    for(let i=n-1;i>=0;i--){const v=sr(cfg.src,i);if(v!==null){ci=i;cv=v;break;}}
+    const pv=ci>0?sr(cfg.src,ci-1):null;
+    const d=(cv!==null&&pv!==null)?cv-pv:null;
+    const la=ci>=0?months[ci].toUpperCase():'—',lb=ci>0?months[ci-1].toUpperCase():'—';
+    const ud=d!==null?(d>0?'up':'dn'):'',ar=d!==null?(d>0?'▲':'▼'):'';
+    return `<div class="ctc" style="border-top:3px solid ${cfg.color}">
+      <div class="ctl">${cfg.label}</div>
+      <div class="ctr">
+        <span class="ctv" style="color:${cfg.color}">${cv!==null?cv.toLocaleString('es'):'—'}</span>
+        <span class="ctp">ant. ${pv!==null?pv.toLocaleString('es'):'—'}</span>
+      </div>
+      ${d!==null?`<div class="ctd ${ud}">${ar} ${Math.abs(d).toLocaleString('es')} vs anterior</div>`:''}
+      <div class="ctm">${lb} → ${la}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── SNAPSHOT TABLE ────────────────────────────────────────────────────────────
+function buildSnap(tid,slFn,data,regs,cols){
+  const last=a=>{const s=a||[];for(let i=s.length-1;i>=0;i--)if(s[i]!==null)return s[i];return null;};
+  const prev=a=>{const s=a||[];let f=0;for(let i=s.length-1;i>=0;i--)if(s[i]!==null){if(f===1)return s[i];f++;}return null;};
+  document.getElementById(tid).innerHTML=
+    `<thead><tr><th>Reg.</th>${cols.map(c=>`<th>${c.lbl}</th>`).join('')}</tr></thead><tbody>`+
+    regs.map(r=>`<tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${COL[r]};margin-right:6px;vertical-align:middle"></span><b>${r}</b></td>
+      ${cols.map(c=>{
+        const src=c.reg?data[c.key][r]:data[c.key];
+        const lv=last(slFn(src)),pv=prev(slFn(src));
+        if(c.badge){
+          const b=lv!==null?`<span class="${lv>=0?'bp':'bn'}">${(lv*100).toFixed(1)}%</span>`:'<span style="color:var(--mu)">N/D</span>';
+          return `<td>${b}${dB(lv,pv,true,false)}</td>`;
+        }
+        const dsp=c.pct?(lv!==null?(lv*100).toFixed(1)+'%':'—'):(lv!==null?lv.toLocaleString('es'):'—');
+        return `<td>${dsp}${dB(lv,pv,c.pct,c.gwd)}</td>`;
+      }).join('')}
+    </tr>`).join('')+`</tbody>`;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  HOGAR — BUILD
+// ══════════════════════════════════════════════════════════════════════════════
+function hBuild(){
+  Object.values(hC).forEach(c=>c.destroy()); hC={};
+  const D=hD(), regs=hRs(), months=hSM();
+  const gran=hG==='Q'?'Trim. Móvil 3M':'Mensual';
+
+  // ── NPS fuentes según granularidad ──
+  // Nacionales: TM del Excel cuando Q
+  const srcFtth  = hG==='Q'?HD.hNpsFtthTM  :HD.hNpsFtth;
+  const srcHfc   = hG==='Q'?HD.hNpsHfcTM   :HD.hNpsHfc;
+  const srcNeutra= hG==='Q'?HD.hNpsNeutraTM:HD.hNpsNeutra;
+  const srcPropia= hG==='Q'?HD.hNpsPropTM  :HD.hNpsPropia;
+  // Regional: NPS HOGAR TM del Excel cuando Q
+  const srcHReg  = hG==='Q'?HD.hNpsHogarTM :HD.hNpsHogar;
+
+  ['hSbGen','hSbFtth','hSbHfc','hSbNeutra','hSbPropia'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.textContent=`Nacional · ${gran}`;
+  });
+  const elHReg=document.getElementById('hSbHReg');if(elHReg)elHReg.textContent=gran;
+
+  // Nacionales
+  hC.gen   =ln('hCGen',   months,[lds('NPS General',  hSl(D.hNpsGen).map(pct),  '#E8001D')],pCb);
+  hC.ftth  =ln('hCFtth',  months,[lds('NPS FTTH',     hSl(srcFtth).map(pct),    '#FF6B00')],pCb);
+  hC.hfc   =ln('hCHfc',   months,[lds('NPS HFC',      hSl(srcHfc).map(pct),     '#003087')],pCb);
+  hC.neutra=ln('hCNeutra',months,[lds('NPS Neutra',   hSl(srcNeutra).map(pct),  '#6D6E71')],pCb);
+  hC.propia=ln('hCPropia',months,[lds('NPS Propia',   hSl(srcPropia).map(pct),  '#9B0021')],pCb);
+
+  // NPS Hogar regional (mensual o TM del Excel)
+  hC.hreg=new Chart(document.getElementById('hCHReg'),{type:'line',
+    data:{labels:months,datasets:regs.map(r=>({
+      label:r,data:hSl(srcHReg[r]).map(pct),
+      borderColor:COL[r],backgroundColor:'transparent',
+      borderWidth:2.5,pointRadius:3,tension:.4,spanGaps:true}))},
+    options:wL(bO(pCb))});
+
+  // KPI Cards HOGAR
+  const kDiv=document.getElementById('hKPI');
+  kDiv.style.gridTemplateColumns=`repeat(${regs.length},1fr)`;kDiv.innerHTML='';
+  regs.forEach(r=>{
+    const inc=lt(hSl(D.hIncTRF[r])),trf=lt(hSl(D.hTrf[r])),nps=lt(hSl(srcHReg[r]));
+    const el=document.createElement('div');el.className=`kc ${r.toLowerCase()}`;
+    el.innerHTML=`<div class="kr">${r}</div>
+      <div class="km">Incidentes TRF</div>
+      <div class="kv">${inc.last!==null?inc.last.toLocaleString('es'):'—'}</div>${dH(inc,true,false)}
+      <div class="ksep"></div>
+      <div class="km">TRF %</div>
+      <div class="ks" style="color:var(--txt)">${trf.last!==null?(trf.last*100).toFixed(1)+'%':'—'}</div>${dH(trf,false,true)}
+      <div class="ksep"></div>
+      <div class="km">NPS Hogar</div>
+      <div class="ks" style="color:${nps.last!==null&&nps.last>=0?'var(--grn)':'var(--neg)'}">${nps.last!==null?(nps.last*100).toFixed(1)+'%':'N/D'}</div>${dH(nps,false,true)}`;
+    kDiv.appendChild(el);
+  });
+
+  // TRF
+  document.getElementById('hLegTRF').innerHTML=regs.map(r=>`<div class="li"><div class="ld" style="background:${COL[r]}"></div>${r}</div>`).join('');
+  hC.trf=new Chart(document.getElementById('hCTRF'),{type:'line',
+    data:{labels:months,datasets:regs.map(r=>({label:r,data:hSl(D.hIncTRF[r]),
+      borderColor:COL[r],backgroundColor:COL[r]+'12',borderWidth:2,pointRadius:3,tension:.35,fill:true}))},
+    options:bO()});
+  hC.trfp=new Chart(document.getElementById('hCTRFp'),{type:'line',
+    data:{labels:months,datasets:regs.map(r=>({label:r,
+      data:hSl(D.hTrf[r]).map(v=>v!==null?+(v*100).toFixed(2):null),
+      borderColor:COL[r],backgroundColor:'transparent',borderWidth:2,pointRadius:3,tension:.35}))},
+    options:wL(bO(pCb))});
+
+  // Snapshot HOGAR
+  buildSnap('hSnap',arr=>hSl(arr),D,regs,[
+    {key:'hIncTRF',lbl:'Inc TRF',pct:false,gwd:true, reg:true},
+    {key:'hTrf',   lbl:'TRF %', pct:true, gwd:false,reg:true},
+    {key:'hNpsHogar',lbl:'NPS Hogar',pct:false,reg:true,badge:true},
+    {key:'hCaDisp',lbl:'CA Disp',pct:false,gwd:true,reg:true},
+    {key:'hCaQoe', lbl:'CA QOE', pct:false,gwd:true,reg:true},
+    {key:'hCaFtth',lbl:'CA FTTH',pct:false,gwd:true,reg:true},
+  ]);
+
+  // CA totals
+  const hCACfg=[
+    {label:'CA Disponibilidad',src:D.hCaDisp,color:CA_D},
+    {label:'CA QOE',           src:D.hCaQoe, color:CA_Q},
+    {label:'CA FTTH',          src:D.hCaFtth,color:CA_F},
+  ];
+  buildCTBar('hCTBar',hRs,arr=>hSl(arr),hCACfg,months);
+  document.getElementById('hCTLbl').textContent=`Totales CA — ${hR==='ALL'?'Todas las regiones':hR}`;
+  document.getElementById('hCTSub').textContent=gran;
+  ['hSbCTL','hSbCTD','hSbCTQ','hSbCTF'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=gran;});
+
+  function htot(src){
+    return Array.from({length:months.length},(_,i)=>{
+      let s=0,any=false;regs.forEach(r=>{const d=hSl(src[r]);if(d[i]!=null){s+=d[i];any=true;}});return any?s:null;
+    });
+  }
+  const tD=htot(D.hCaDisp),tQ=htot(D.hCaQoe),tF=htot(D.hCaFtth);
+  ['hCtL','hCtD','hCtQ','hCtF'].forEach(k=>{if(hC[k]){hC[k].destroy();delete hC[k];}});
+  const bs=c=>({backgroundColor:c+'CC',borderColor:c,borderWidth:1,borderRadius:3});
+
+  // Stacked total
+  hC.hCtL=new Chart(document.getElementById('hCCTL'),{type:'bar',
+    data:{labels:months,datasets:[
+      {label:'CA Disp',...bs(CA_D),data:tD},
+      {label:'CA QOE', ...bs(CA_Q),data:tQ},
+      {label:'CA FTTH',...bs(CA_F),data:tF}]},
+    options:{...wL(bO(kCb)),scales:{...bO(kCb).scales,
+      x:{...bO(kCb).scales.x,stacked:true},
+      y:{...bO(kCb).scales.y,stacked:true}}}});
+
+  hC.hCtD=new Chart(document.getElementById('hCCTD'),{type:'bar',
+    data:{labels:months,datasets:[{label:'CA Disp',data:tD,...bs(CA_D)}]},options:bO(kCb)});
+  hC.hCtQ=new Chart(document.getElementById('hCCTQ'),{type:'bar',
+    data:{labels:months,datasets:[{label:'CA QOE', data:tQ,...bs(CA_Q)}]},options:bO(kCb)});
+  hC.hCtF=new Chart(document.getElementById('hCCTF'),{type:'bar',
+    data:{labels:months,datasets:[{label:'CA FTTH',data:tF,...bs(CA_F)}]},options:bO(kCb)});
+
+  
+
+  // Snapshot global HOGAR — todos los indicadores
+  buildSnap('hSnapFull',arr=>hSl(arr),D,regs,[
+    {key:'hIncTRF',  lbl:'Inc TRF',    pct:false, gwd:true,  reg:true},
+    {key:'hTrf',     lbl:'TRF %',      pct:true,  gwd:false, reg:true},
+    {key:'hNpsHogar',lbl:'NPS Hogar',  pct:false, reg:true,  badge:true},
+    {key:'hCaDisp',  lbl:'CA Disp',    pct:false, gwd:true,  reg:true},
+    {key:'hCaQoe',   lbl:'CA QOE',     pct:false, gwd:true,  reg:true},
+    {key:'hCaFtth',  lbl:'CA FTTH',    pct:false, gwd:true,  reg:true},
+    {key:'hNpsFdsTx',lbl:'NPS FDS TX', pct:true,  gwd:false, reg:true},
+    {key:'hRecFalAf',lbl:'Rec.Af.',    pct:true,  gwd:true,  reg:true},
+    {key:'hRecFalDe',lbl:'Rec.Deg.',   pct:true,  gwd:true,  reg:true},
+  ]);
+
+  hChip();
+}
+
+function hChip(){
+  const m=hMn(),f=m[hF].toUpperCase(),t=m[hT].toUpperCase();
+  document.getElementById('perChip').textContent=f===t?f:`${f} — ${t}`;
+  document.getElementById('granChip').textContent=hG==='Q'?'TRIM. MÓVIL':'MENSUAL';
+}
+
+// ── HOGAR CONTROLS ────────────────────────────────────────────────────────────
+function hFR(r,btn){
+  hR=r;
+  document.querySelectorAll('#tab-h .fb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  hApplyRange(); hBuild();
+}
+// FIX 1: cambiar granularidad conserva el período seleccionado
+function hSG(g,btn){
+  hG=g;
+  document.querySelectorAll('#tab-h .gb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  hApplyRange();      // re-aplica el mismo rango en la nueva escala
+  hRebuildSel();
+  hBuild();
+}
+function hSR(n,btn){
+  hLR=n;
+  document.querySelectorAll('#tab-h .rb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const m=hMn();
+  if(n===0){hF=0;hT=m.length-1;}else{hT=m.length-1;hF=Math.max(0,hT-n+1);}
+  hSyncSel(); hBuild();
+}
+function hApplyRange(){
+  const m=hMn();
+  if(hLR===0){hF=0;hT=m.length-1;}else{hT=m.length-1;hF=Math.max(0,hT-hLR+1);}
+  document.querySelectorAll('#tab-h .rb').forEach(b=>b.classList.remove('active'));
+  const id=hLR===3?'hR3':hLR===6?'hR6':'hR0';
+  const el=document.getElementById(id);if(el)el.classList.add('active');
+  hSyncSel();
+}
+function hAC(){
+  const f=parseInt(document.getElementById('hSF').value);
+  const t=parseInt(document.getElementById('hST').value);
+  if(f<=t){hF=f;hT=t;}hLR=-1;
+  document.querySelectorAll('#tab-h .rb').forEach(b=>b.classList.remove('active'));
+  hBuild();
+}
+function hSyncSel(){
+  const sf=document.getElementById('hSF'),st=document.getElementById('hST');
+  if(sf)sf.value=hF;if(st)st.value=hT;
+}
+function hRebuildSel(){
+  const m=hMn();
+  document.getElementById('hSF').innerHTML=m.map((l,i)=>`<option value="${i}">${l}</option>`).join('');
+  document.getElementById('hST').innerHTML=m.map((l,i)=>`<option value="${i}"${i===m.length-1?' selected':''}>${l}</option>`).join('');
+  hSyncSel();
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  MÓVIL — BUILD
+// ══════════════════════════════════════════════════════════════════════════════
+function mBuild(){
+  Object.values(mC).forEach(c=>c.destroy()); mC={};
+  const D=mD(), regs=mRs(), months=mSM();
+  const gran=mG==='Q'?'Trim. Móvil 3M':'Mensual';
+
+  // NPS POS/PRE regional: mensual o TM del Excel
+  const srcPos=mG==='Q'?MD.mNpsPosTM:MD.mNpsPos;
+  const srcPre=mG==='Q'?MD.mNpsPreTM:MD.mNpsPre;
+
+  ['mSbGPos','mSbGPre'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=`Nacional · ${gran}`;});
+  const elPos=document.getElementById('mSbPos');if(elPos)elPos.textContent=gran;
+  const elPre=document.getElementById('mSbPre');if(elPre)elPre.textContent=gran;
+
+  // Nacionales NPS
+  mC.gpos=ln('mCGPos',months,[lds('NPS General POS',mSl(D.mNpsGPos).map(pct),'#E8001D')],pCb);
+  mC.gpre=ln('mCGPre',months,[lds('NPS General PRE',mSl(D.mNpsGPre).map(pct),'#003087')],pCb);
+
+  // NPS regional POS/PRE (mensual o TM del Excel)
+  mC.pos=new Chart(document.getElementById('mCPos'),{type:'line',
+    data:{labels:months,datasets:regs.map(r=>({
+      label:r,data:mSl(srcPos[r]).map(pct),
+      borderColor:COL[r],backgroundColor:'transparent',
+      borderWidth:2.5,pointRadius:3,tension:.4,spanGaps:true}))},
+    options:wL(bO(pCb))});
+  mC.pre=new Chart(document.getElementById('mCPre'),{type:'line',
+    data:{labels:months,datasets:regs.map(r=>({
+      label:r,data:mSl(srcPre[r]).map(pct),
+      borderColor:COL[r],backgroundColor:'transparent',
+      borderWidth:2.5,pointRadius:3,tension:.4,spanGaps:true}))},
+    options:wL(bO(pCb))});
+
+  // KPI Cards MÓVIL
+  const kDiv=document.getElementById('mKPI');
+  kDiv.style.gridTemplateColumns=`repeat(${regs.length},1fr)`;kDiv.innerHTML='';
+  regs.forEach(r=>{
+    const inc=lt(mSl(D.mIncTRF[r])),trf=lt(mSl(D.mTrf[r]));
+    const pos=lt(mSl(srcPos[r])),pre=lt(mSl(srcPre[r]));
+    const el=document.createElement('div');el.className=`kc ${r.toLowerCase()}`;
+    el.innerHTML=`<div class="kr">${r}</div>
+      <div class="km">Inc. TRF</div>
+      <div class="kv">${inc.last!==null?inc.last.toLocaleString('es'):'—'}</div>${dH(inc,true,false)}
+      <div class="ksep"></div>
+      <div class="km">TRF %</div>
+      <div class="ks">${trf.last!==null?(trf.last*100).toFixed(1)+'%':'—'}</div>${dH(trf,false,true)}
+      <div class="ksep"></div>
+      <div class="km">NPS POS</div>
+      <div class="ks" style="color:${pos.last!==null&&pos.last>=0?'var(--grn)':'var(--neg)'}">${pos.last!==null?(pos.last*100).toFixed(1)+'%':'N/D'}</div>${dH(pos,false,true)}
+      <div class="ksep"></div>
+      <div class="km">NPS PRE</div>
+      <div class="ks" style="color:${pre.last!==null&&pre.last>=0?'var(--grn)':'var(--neg)'}">${pre.last!==null?(pre.last*100).toFixed(1)+'%':'N/D'}</div>${dH(pre,false,true)}`;
+    kDiv.appendChild(el);
+  });
+
+  // TRF MÓVIL
+  document.getElementById('mLegTRF').innerHTML=regs.map(r=>`<div class="li"><div class="ld" style="background:${COL[r]}"></div>${r}</div>`).join('');
+  mC.trf=new Chart(document.getElementById('mCTRF'),{type:'line',
+    data:{labels:months,datasets:regs.map(r=>({label:r,data:mSl(D.mIncTRF[r]),
+      borderColor:COL[r],backgroundColor:COL[r]+'12',borderWidth:2,pointRadius:3,tension:.35,fill:true}))},
+    options:bO()});
+  mC.trfp=new Chart(document.getElementById('mCTRFp'),{type:'line',
+    data:{labels:months,datasets:regs.map(r=>({label:r,
+      data:mSl(D.mTrf[r]).map(v=>v!==null?+(v*100).toFixed(2):null),
+      borderColor:COL[r],backgroundColor:'transparent',borderWidth:2,pointRadius:3,tension:.35}))},
+    options:wL(bO(pCb))});
+
+  // Snapshot MÓVIL
+  buildSnap('mSnap',arr=>mSl(arr),D,regs,[
+    {key:'mIncTRF',  lbl:'Inc TRF',  pct:false,gwd:true, reg:true},
+    {key:'mTrf',     lbl:'TRF %',    pct:true, gwd:false,reg:true},
+    {key:'mCaDisp4g',lbl:'CA D.4G',  pct:false,gwd:true, reg:true},
+    {key:'mCaDesemp',lbl:'CA Desemp',pct:false,gwd:true, reg:true},
+  ]);
+
+  // CA MÓVIL totals
+  const mCACfg=[
+    {label:'CA Dispo. 4G', src:D.mCaDisp4g,color:CA_D},
+    {label:'CA Desempeño', src:D.mCaDesemp, color:CA_F},
+  ];
+  buildCTBar('mCTBar',mRs,arr=>mSl(arr),mCACfg,months);
+  document.getElementById('mCTLbl').textContent=`Totales CA Móvil — ${mR==='ALL'?'Todas las regiones':mR}`;
+  ['mSbCTL','mSbCTD','mSbCTDe'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=gran;});
+
+  function mtot(src){
+    return Array.from({length:months.length},(_,i)=>{
+      let s=0,any=false;regs.forEach(r=>{const d=mSl(src[r]);if(d[i]!=null){s+=d[i];any=true;}});return any?s:null;
+    });
+  }
+  const mTD=mtot(D.mCaDisp4g),mTDe=mtot(D.mCaDesemp);
+  ['mCtL','mCtD','mCtDe'].forEach(k=>{if(mC[k]){mC[k].destroy();delete mC[k];}});
+  const bs=c=>({backgroundColor:c+'CC',borderColor:c,borderWidth:1,borderRadius:3});
+
+  mC.mCtL=new Chart(document.getElementById('mCCTL'),{type:'bar',
+    data:{labels:months,datasets:[
+      {label:'Disp 4G',...bs(CA_D),data:mTD},
+      {label:'Desemp', ...bs(CA_F),data:mTDe}]},
+    options:{...wL(bO(kCb)),scales:{...bO(kCb).scales,
+      x:{...bO(kCb).scales.x,stacked:true},
+      y:{...bO(kCb).scales.y,stacked:true}}}});
+  mC.mCtD =new Chart(document.getElementById('mCCTD'), {type:'bar',data:{labels:months,datasets:[{label:'CA Disp 4G', data:mTD, ...bs(CA_D)}]},options:bO(kCb)});
+  mC.mCtDe=new Chart(document.getElementById('mCCTDe'),{type:'bar',data:{labels:months,datasets:[{label:'CA Desemp',  data:mTDe,...bs(CA_F)}]},options:bO(kCb)});
+
+  
+
+  // ICR 5G
+  mC.icr  =ln('mCICR',  months,[lds('ICR 5G',     mSl(D.mIcr5g).map(pct),  '#059669')],pCb);
+  mC.oficr=ln('mCOfICR',months,[lds('Ofensores ICR 5G',  mSl(D.mOfIcr5g),         '#6D6E71')]);
+
+  mChip();
+}
+
+function mChip(){
+  const m=mMn(),f=m[mF].toUpperCase(),t=m[mT].toUpperCase();
+  document.getElementById('perChip').textContent=f===t?f:`${f} — ${t}`;
+  document.getElementById('granChip').textContent=mG==='Q'?'TRIM. MÓVIL':'MENSUAL';
+}
+
+// ── MÓVIL CONTROLS ────────────────────────────────────────────────────────────
+function mFR(r,btn){
+  mR=r;
+  document.querySelectorAll('#tab-m .fb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  mApplyRange(); mBuild();
+}
+// FIX 1: igual que HOGAR
+function mSG(g,btn){
+  mG=g;
+  document.querySelectorAll('#tab-m .gb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  mApplyRange();
+  mRebuildSel();
+  mBuild();
+}
+function mSR(n,btn){
+  mLR=n;
+  document.querySelectorAll('#tab-m .rb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const m=mMn();
+  if(n===0){mF=0;mT=m.length-1;}else{mT=m.length-1;mF=Math.max(0,mT-n+1);}
+  mSyncSel(); mBuild();
+}
+function mApplyRange(){
+  const m=mMn();
+  if(mLR===0){mF=0;mT=m.length-1;}else{mT=m.length-1;mF=Math.max(0,mT-mLR+1);}
+  document.querySelectorAll('#tab-m .rb').forEach(b=>b.classList.remove('active'));
+  const id=mLR===3?'mR3':mLR===6?'mR6':'mR0';
+  const el=document.getElementById(id);if(el)el.classList.add('active');
+  mSyncSel();
+}
+function mAC(){
+  const f=parseInt(document.getElementById('mSF').value);
+  const t=parseInt(document.getElementById('mST').value);
+  if(f<=t){mF=f;mT=t;}mLR=-1;
+  document.querySelectorAll('#tab-m .rb').forEach(b=>b.classList.remove('active'));
+  mBuild();
+}
+function mSyncSel(){
+  const sf=document.getElementById('mSF'),st=document.getElementById('mST');
+  if(sf)sf.value=mF;if(st)st.value=mT;
+}
+function mRebuildSel(){
+  const m=mMn();
+  document.getElementById('mSF').innerHTML=m.map((l,i)=>`<option value="${i}">${l}</option>`).join('');
+  document.getElementById('mST').innerHTML=m.map((l,i)=>`<option value="${i}"${i===m.length-1?' selected':''}>${l}</option>`).join('');
+  mSyncSel();
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  OTROS INDICADORES — BUILD
+// ══════════════════════════════════════════════════════════════════════════════
+let oR='ALL', oG='M', oF=0, oT=HM.length-1, oLR=0;
+let oC={};
+function oMn(){ return oG==='Q'?HQ:HM; }
+function oD() { return oG==='Q'?HDQ:HD; }
+function oRs(){ return oR==='ALL'?REGS:[oR]; }
+function oSM(){ return oMn().slice(oF,oT+1); }
+function oSl(a){ return (a||[]).slice(oF,oT+1); }
+
+function oBuild(){
+  Object.values(oC).forEach(c=>c.destroy()); oC={};
+  const D=oD(), regs=oRs(), months=oSM();
+  const gran=oG==='Q'?'Trim. Móvil 3M':'Mensual';
+
+  // Actualizar subtítulos
+  ['oSbFdsGen','oSbCrA','oSbCrT','oSbRecAfTot','oSbRecDeTot'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.textContent=`Nacional · ${gran}`;
+  });
+  ['oSbFdsTx','oSbRecAf','oSbRecDe'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.textContent=`Regional · ${gran}`;
+  });
+
+  // NPS FDS General (nacional)
+  oC.fdsGen=ln('oCFdsGen',months,[lds('NPS FDS General',oSl(D.hNpsFdsGen).map(pct),'#E8001D')],pCb);
+
+  // NPS FDS TX (regional — líneas por región)
+  oC.fdsTx=new Chart(document.getElementById('oCFdsTx'),{type:'line',
+    data:{labels:months,datasets:regs.map(r=>({
+      label:r,data:oSl(D.hNpsFdsTx[r]).map(pct),
+      borderColor:COL[r],backgroundColor:'transparent',
+      borderWidth:2.5,pointRadius:3,tension:.4,spanGaps:true}))},
+    options:wL(bO(pCb))});
+
+  // CR Administrativo (nacional)
+  oC.crA=ln('oCCrA',months,[lds('CR Administrativo',oSl(D.hCrAdmin).map(pct),'#EA580C')],pCb);
+
+  // CR Técnico (nacional)
+  oC.crT=ln('oCCrT',months,[lds('CR Técnico',oSl(D.hCrTec).map(pct),'#C2410C')],pCb);
+
+  // Recurrencia General Afectación / Degradación (nacional)
+  oC.recAfTot=ln('oCRecAfTot',months,[lds('Rec. Fallas Afec Total',oSl(D.hRecFalAfTot).map(pct),'#003087')],pCb);
+  oC.recDeTot=ln('oCRecDeTot',months,[lds('Rec. Fallas Deg Total',oSl(D.hRecFalDeTot).map(pct),'#E8001D')],pCb);
+
+  // Rec Fallas Afectación (regional)
+  oC.recAf=new Chart(document.getElementById('oCRecAf'),{type:'line',
+    data:{labels:months,datasets:regs.map(r=>({
+      label:r,data:oSl(D.hRecFalAf[r]).map(pct),
+      borderColor:COL[r],backgroundColor:'transparent',
+      borderWidth:2.5,pointRadius:3,tension:.4,spanGaps:true}))},
+    options:wL(bO(pCb))});
+
+  // Rec Fallas Degradación (regional)
+  oC.recDe=new Chart(document.getElementById('oCRecDe'),{type:'line',
+    data:{labels:months,datasets:regs.map(r=>({
+      label:r,data:oSl(D.hRecFalDe[r]).map(pct),
+      borderColor:COL[r],backgroundColor:'transparent',
+      borderWidth:2.5,pointRadius:3,tension:.4,spanGaps:true}))},
+    options:wL(bO(pCb))});
+
+  // Snapshot Otros
+  buildSnap('oSnap',arr=>oSl(arr),D,regs,[
+    {key:'hNpsFdsTx', lbl:'NPS FDS TX', pct:true,  gwd:false, reg:true,  badge:true},
+    {key:'hRecFalAf', lbl:'Rec.Afect.', pct:true,  gwd:true,  reg:true},
+    {key:'hRecFalDe', lbl:'Rec.Degrad.',pct:true,  gwd:true,  reg:true},
+  ]);
+
+  oChip();
+}
+
+function oChip(){
+  const m=oMn(),f=m[oF].toUpperCase(),t=m[oT].toUpperCase();
+  document.getElementById('perChip').textContent=f===t?f:`${f} — ${t}`;
+  document.getElementById('granChip').textContent=oG==='Q'?'TRIM. MÓVIL':'MENSUAL';
+}
+
+function oFR(r,btn){
+  oR=r;
+  document.querySelectorAll('#tab-o .fb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  oApplyRange(); oBuild();
+}
+function oSG(g,btn){
+  oG=g;
+  document.querySelectorAll('#tab-o .gb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  oApplyRange(); oRebuildSel(); oBuild();
+}
+function oSR(n,btn){
+  oLR=n;
+  document.querySelectorAll('#tab-o .rb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const m=oMn();
+  if(n===0){oF=0;oT=m.length-1;}else{oT=m.length-1;oF=Math.max(0,oT-n+1);}
+  oSyncSel(); oBuild();
+}
+function oApplyRange(){
+  const m=oMn();
+  if(oLR===0){oF=0;oT=m.length-1;}else{oT=m.length-1;oF=Math.max(0,oT-oLR+1);}
+  document.querySelectorAll('#tab-o .rb').forEach(b=>b.classList.remove('active'));
+  const id=oLR===3?'oR3':oLR===6?'oR6':'oR0';
+  const el=document.getElementById(id);if(el)el.classList.add('active');
+  oSyncSel();
+}
+function oAC(){
+  const f=parseInt(document.getElementById('oSF').value);
+  const t=parseInt(document.getElementById('oST').value);
+  if(f<=t){oF=f;oT=t;}oLR=-1;
+  document.querySelectorAll('#tab-o .rb').forEach(b=>b.classList.remove('active'));
+  oBuild();
+}
+function oSyncSel(){
+  const sf=document.getElementById('oSF'),st=document.getElementById('oST');
+  if(sf)sf.value=oF;if(st)st.value=oT;
+}
+function oRebuildSel(){
+  const m=oMn();
+  document.getElementById('oSF').innerHTML=m.map((l,i)=>`<option value="${i}">${l}</option>`).join('');
+  document.getElementById('oST').innerHTML=m.map((l,i)=>`<option value="${i}"${i===m.length-1?' selected':''}>${l}</option>`).join('');
+  oSyncSel();
+}
+
+// ── TAB SWITCH ────────────────────────────────────────────────────────────────
+function switchTab(id,btn){
+  document.querySelectorAll('.tpane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='h') hBuild();
+  else if(id==='m') mBuild();
+  else if(id==='o') oBuild();
+  else if(id==='a') aBuild();
+  setTimeout(adjSticky,60);
+}
+
+function adjSticky(){
+  const hH=document.querySelector('header').offsetHeight;
+  const tH=document.querySelector('.tabbar').offsetHeight;
+  const top=hH+tH;
+  ['hNav','mNav','oNav','aNav'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.style.top=top+'px';
+  });
+}
+window.addEventListener('load',()=>{adjSticky();hBuild();aInitSel();});
+window.addEventListener('resize',adjSticky);
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  ANÁLISIS — Correlación estadística con NPS General Hogar
+// ══════════════════════════════════════════════════════════════════════════════
+let aG='M', aF=0, aT_=HM.length-1, aLR=0;
+let aC={};
+function aMn(){ return aG==='Q'?HQ:HM; }
+function aD_(){ return aG==='Q'?HDQ:HD; }
+function aSl(a){ return (a||[]).slice(aF,aT_+1); }
+function aSM_(){ return aMn().slice(aF,aT_+1); }
+
+// ── Indicadores a correlacionar con NPS General Hogar ─────────────────────────
+const A_INDICATORS = [
+  {key:'hNpsFtth',    lbl:'NPS FTTH',           nat:true,  pct:true},
+  {key:'hNpsHfc',     lbl:'NPS HFC',            nat:true,  pct:true},
+  {key:'hNpsNeutra',  lbl:'NPS Red Neutra',     nat:true,  pct:true},
+  {key:'hNpsPropia',  lbl:'NPS Red Propia',     nat:true,  pct:true},
+  {key:'hNpsFdsGen',  lbl:'NPS FDS General',    nat:true,  pct:true},
+  {key:'hCrAdmin',    lbl:'CR Administrativo',  nat:true,  pct:true},
+  {key:'hCrTec',      lbl:'CR Técnico',         nat:true,  pct:true},
+  {key:'hRecFalAfTot',lbl:'Rec. Fallas Afect.', nat:true,  pct:true},
+  {key:'hRecFalDeTot',lbl:'Rec. Fallas Degrad.',nat:true,  pct:true},
+];
+
+// ── Pearson r ─────────────────────────────────────────────────────────────────
+function pearson(x,y){
+  // Filter pairs where both are non-null, also track original index
+  const pairs=[];
+  const idxs=[];
+  for(let i=0;i<Math.min(x.length,y.length);i++){
+    if(x[i]!==null && y[i]!==null && !isNaN(x[i]) && !isNaN(y[i])){
+      pairs.push([x[i],y[i]]);
+      idxs.push(i);
+    }
+  }
+  const n=pairs.length;
+  if(n<3) return {r:null,r2:null,n:n,pairs,idxs};
+  const mx=pairs.reduce((s,p)=>s+p[0],0)/n;
+  const my=pairs.reduce((s,p)=>s+p[1],0)/n;
+  let sxy=0,sx2=0,sy2=0;
+  for(const [xi,yi] of pairs){
+    sxy+=(xi-mx)*(yi-my);
+    sx2+=(xi-mx)**2;
+    sy2+=(yi-my)**2;
+  }
+  const denom=Math.sqrt(sx2*sy2);
+  if(denom===0) return {r:0,r2:0,n,pairs,idxs};
+  const r=sxy/denom;
+  return {r:+r.toFixed(4), r2:+(r*r).toFixed(4), n, pairs, idxs};
+}
+
+function corrInterp(r){
+  if(r===null) return {txt:'Sin datos',cls:'vweak'};
+  const a=Math.abs(r);
+  if(a>=0.8) return {txt:'Muy fuerte',cls:'strong'};
+  if(a>=0.6) return {txt:'Fuerte',cls:'strong'};
+  if(a>=0.4) return {txt:'Moderada',cls:'moderate'};
+  if(a>=0.2) return {txt:'Débil',cls:'weak'};
+  return {txt:'Muy débil',cls:'vweak'};
+}
+
+function corrColor(r){
+  if(r===null) return '#F3F4F6';
+  const a=Math.abs(r);
+  if(a>=0.8) return r>0?'#059669':'#DC2626';
+  if(a>=0.6) return r>0?'#10B981':'#EF4444';
+  if(a>=0.4) return r>0?'#34D399':'#F87171';
+  if(a>=0.2) return '#FBBF24';
+  return '#D1D5DB';
+}
+
+function heatBg(r){
+  if(r===null) return 'background:#F9FAFB;color:#9CA3AF;';
+  const a=Math.abs(r);
+  if(a>=0.8) return r>0?'background:#D1FAE5;color:#065F46;':'background:#FEE2E2;color:#991B1B;';
+  if(a>=0.6) return r>0?'background:#A7F3D0;color:#065F46;':'background:#FECACA;color:#991B1B;';
+  if(a>=0.4) return r>0?'background:#FEF3C7;color:#92400E;':'background:#FED7AA;color:#9A3412;';
+  if(a>=0.2) return 'background:#FEF9C3;color:#854D0E;';
+  return 'background:#F3F4F6;color:#6B7280;';
+}
+
+// ── aBuild ────────────────────────────────────────────────────────────────────
+function aBuild(){
+  Object.values(aC).forEach(c=>c.destroy()); aC={};
+  const D=aD_(), months=aSM_();
+  const gran=aG==='Q'?'Trim. Móvil 3M':'Mensual';
+  const target=aSl(D.hNpsGen);
+
+  // Compute correlations
+  const results=A_INDICATORS.map(ind=>{
+    const series=aSl(D[ind.key]);
+    const p=pearson(target,series);
+    return {...ind,...p};
+  }).sort((a,b)=>{
+    if(a.r===null) return 1; if(b.r===null) return -1;
+    return Math.abs(b.r)-Math.abs(a.r);
+  });
+
+  // ── 1. RANKING BAR CHART (horizontal) ──────────────────────────────────────
+  const rankLbl=document.getElementById('aSbRank');
+  if(rankLbl) rankLbl.textContent=`Pearson r · ${gran} · ${months[0]} — ${months[months.length-1]}`;
+
+  const barColors=results.map(r=>corrColor(r.r));
+  const barBorders=barColors.map(c=>c);
+
+  aC.rank=new Chart(document.getElementById('aCRank'),{
+    type:'bar',
+    data:{
+      labels:results.map(r=>r.lbl),
+      datasets:[{
+        label:'|r| Pearson',
+        data:results.map(r=>r.r!==null?Math.abs(r.r):0),
+        backgroundColor:barColors.map(c=>c+'CC'),
+        borderColor:barBorders,
+        borderWidth:1.5,
+        borderRadius:4,
+        barThickness:24,
+      }]
+    },
+    options:{
+      indexAxis:'y',
+      responsive:true,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          backgroundColor:'#fff',borderColor:'#E4E7EC',borderWidth:1,
+          titleColor:'#111827',bodyColor:'#4B5563',padding:10,
+          titleFont:{family:'IBM Plex Sans',weight:'700'},
+          bodyFont:{family:'IBM Plex Sans'},
+          callbacks:{
+            label:function(ctx){
+              const idx=ctx.dataIndex;
+              const rr=results[idx];
+              const sign=rr.r>=0?'+':'';
+              return `r = ${sign}${rr.r}  ·  R² = ${rr.r2}  ·  n = ${rr.n}  ·  ${corrInterp(rr.r).txt}`;
+            }
+          }
+        }
+      },
+      scales:{
+        x:{min:0,max:1,grid:{color:'#F3F4F6'},
+          ticks:{color:'#9CA3AF',font:{family:'IBM Plex Sans',size:10},
+            callback:v=>v.toFixed(1)}},
+        y:{grid:{display:false},
+          ticks:{color:'#111827',font:{family:'Nunito',size:11,weight:'800'}}}
+      }
+    }
+  });
+
+  // ── 2. TABLA RESUMEN ───────────────────────────────────────────────────────
+  const tableLbl=document.getElementById('aSbTable');
+  if(tableLbl) tableLbl.textContent=gran;
+
+  document.getElementById('aCorrTable').innerHTML=
+    `<thead><tr><th>#</th><th>Indicador</th><th>Pearson r</th><th>R²</th><th>n</th><th class="bar-cell">Fuerza</th><th>Interpretación</th><th>Dirección</th></tr></thead><tbody>`+
+    results.map((r,i)=>{
+      const interp=corrInterp(r.r);
+      const dir=r.r===null?'—':r.r>=0?'<span style="color:#059669">▲ Positiva</span>':'<span style="color:#DC2626">▼ Negativa</span>';
+      const barW=r.r!==null?Math.abs(r.r)*100:0;
+      const col=corrColor(r.r);
+      return `<tr>
+        <td style="font-weight:700;color:var(--mu)">${i+1}</td>
+        <td style="font-weight:700">${r.lbl}</td>
+        <td style="font-family:'Nunito';font-weight:900;color:${col}">${r.r!==null?(r.r>=0?'+':'')+r.r:'N/D'}</td>
+        <td>${r.r2!==null?r.r2:'N/D'}</td>
+        <td>${r.n}</td>
+        <td class="bar-cell"><div class="mini-bar" style="width:${barW}%;background:${col};height:14px;"></div></td>
+        <td><span class="corr-badge ${interp.cls}">${interp.txt}</span></td>
+        <td>${dir}</td>
+      </tr>`;
+    }).join('')+`</tbody>`;
+
+  // ── 3. SCATTER PLOTS — Top 3 ───────────────────────────────────────────────
+  const top3=results.filter(r=>r.r!==null).slice(0,3);
+  const scColors=['#059669','#D97706','#003087'];
+  const tagBg=['#D1FAE5','#FEF3C7','#DBEAFE'];
+
+  // Plugin to draw month labels on each scatter point
+  const scLabelPlugin={
+    id:'scatterLabels',
+    afterDatasetsDraw(chart){
+      const ds=chart.data.datasets[0];
+      if(!ds||!ds._monthLabels) return;
+      const ctx=chart.ctx;
+      const meta=chart.getDatasetMeta(0);
+      ctx.save();
+      ctx.font="bold 9px 'Nunito',sans-serif";
+      ctx.textAlign='center';
+      ctx.textBaseline='bottom';
+      meta.data.forEach((pt,idx)=>{
+        const lbl=ds._monthLabels[idx];
+        if(!lbl) return;
+        ctx.fillStyle='#374151';
+        ctx.fillText(lbl, pt.x, pt.y-8);
+      });
+      ctx.restore();
+    }
+  };
+
+  top3.forEach((res,i)=>{
+    const cid='aCSc'+(i+1);
+    const lblEl=document.getElementById('aScLbl'+(i+1));
+    const subEl=document.getElementById('aScSub'+(i+1));
+    if(lblEl) lblEl.textContent=`${res.lbl} vs NPS General`;
+    if(subEl) subEl.textContent=`r = ${res.r>=0?'+':''}${res.r} · R² = ${res.r2}`;
+
+    // Build scatter data with month labels
+    const mLabels=res.idxs.map(idx=>months[idx]||'');
+    const scData=res.pairs.map(p=>({x:+(p[1]*100).toFixed(2),y:+(p[0]*100).toFixed(2)}));
+
+    // Linear regression for trend line
+    const xs=scData.map(p=>p.x),ys=scData.map(p=>p.y);
+    const mxv=xs.reduce((s,v)=>s+v,0)/xs.length;
+    const myv=ys.reduce((s,v)=>s+v,0)/ys.length;
+    let num=0,den=0;
+    for(let j=0;j<xs.length;j++){num+=(xs[j]-mxv)*(ys[j]-myv);den+=(xs[j]-mxv)**2;}
+    const slope=den!==0?num/den:0;
+    const intercept=myv-slope*mxv;
+    const xMin=Math.min(...xs),xMax=Math.max(...xs);
+    const trendData=[{x:xMin,y:+(slope*xMin+intercept).toFixed(2)},{x:xMax,y:+(slope*xMax+intercept).toFixed(2)}];
+
+    const scDS={label:res.lbl,data:scData,
+      backgroundColor:scColors[i]+'99',borderColor:scColors[i],
+      pointRadius:6,pointHoverRadius:9,
+      _monthLabels:mLabels};
+
+    aC['sc'+(i+1)]=new Chart(document.getElementById(cid),{
+      type:'scatter',
+      data:{
+        datasets:[
+          scDS,
+          {label:'Tendencia',data:trendData,type:'line',
+           borderColor:scColors[i]+'66',borderWidth:2,borderDash:[6,3],
+           pointRadius:0,fill:false,tension:0}
+        ]
+      },
+      options:{
+        responsive:true,
+        layout:{padding:{top:18}},
+        plugins:{
+          legend:{display:false},
+          tooltip:{backgroundColor:'#fff',borderColor:'#E4E7EC',borderWidth:1,
+            titleColor:'#111827',bodyColor:'#4B5563',padding:10,
+            titleFont:{family:'IBM Plex Sans',weight:'700'},
+            bodyFont:{family:'IBM Plex Sans'},
+            callbacks:{
+              title:function(items){
+                if(!items.length||items[0].datasetIndex===1) return '';
+                const idx=items[0].dataIndex;
+                return mLabels[idx]?mLabels[idx].toUpperCase():'';
+              },
+              label:function(ctx){
+                if(ctx.datasetIndex===1) return '';
+                return `${res.lbl}: ${ctx.parsed.x}%  ·  NPS Gen: ${ctx.parsed.y}%`;
+              }
+            }}
+        },
+        scales:{
+          x:{title:{display:true,text:res.lbl+' (%)',font:{family:'IBM Plex Sans',size:10,weight:'600'},color:'#6B7280'},
+            grid:{color:'#F3F4F6'},ticks:{color:'#9CA3AF',font:{family:'IBM Plex Sans',size:9},callback:v=>v+'%'}},
+          y:{title:{display:true,text:'NPS General (%)',font:{family:'IBM Plex Sans',size:10,weight:'600'},color:'#6B7280'},
+            grid:{color:'#F3F4F6'},ticks:{color:'#9CA3AF',font:{family:'IBM Plex Sans',size:9},callback:v=>v+'%'}}
+        }
+      },
+      plugins:[scLabelPlugin]
+    });
+  });
+
+  // ── 4. HEATMAP — Correlación cruzada ────────────────────────────────────────
+  const heatLbl=document.getElementById('aSbHeat');
+  if(heatLbl) heatLbl.textContent=gran;
+
+  const allInds=[{key:'hNpsGen',lbl:'NPS General'},...A_INDICATORS];
+  const heatData=[];
+  for(const row of allInds){
+    const rowArr=[];
+    for(const col of allInds){
+      if(row.key===col.key){rowArr.push({r:1,r2:1});}
+      else{
+        const sx=aSl(D[row.key]),sy=aSl(D[col.key]);
+        rowArr.push(pearson(sx,sy));
+      }
+    }
+    heatData.push(rowArr);
+  }
+
+  document.getElementById('aHeatmap').innerHTML=
+    `<thead><tr><th></th>${allInds.map(c=>`<th style="font-size:8px;padding:6px 4px;writing-mode:vertical-lr;text-orientation:mixed;white-space:nowrap;">${c.lbl}</th>`).join('')}</tr></thead><tbody>`+
+    allInds.map((row,i)=>`<tr>
+      <td style="font-weight:700;font-size:10px;white-space:nowrap;">${row.lbl}</td>
+      ${heatData[i].map((cell,j)=>{
+        const v=cell.r!==null?cell.r.toFixed(2):'—';
+        return `<td class="heat-cell" style="${heatBg(cell.r)}">${i===j?'1.00':v}</td>`;
+      }).join('')}
+    </tr>`).join('')+`</tbody>`;
+
+  aChip();
+}
+
+function aChip(){
+  const m=aMn(),f=m[aF].toUpperCase(),t=m[aT_].toUpperCase();
+  document.getElementById('perChip').textContent=f===t?f:`${f} — ${t}`;
+  document.getElementById('granChip').textContent=aG==='Q'?'TRIM. MÓVIL':'MENSUAL';
+}
+
+// ── ANÁLISIS CONTROLS ─────────────────────────────────────────────────────────
+function aInitSel(){
+  const m=aMn();
+  document.getElementById('aSF').innerHTML=m.map((l,i)=>`<option value="${i}">${l}</option>`).join('');
+  document.getElementById('aST').innerHTML=m.map((l,i)=>`<option value="${i}"${i===m.length-1?' selected':''}>${l}</option>`).join('');
+}
+function aSG(g,btn){
+  aG=g;
+  document.querySelectorAll('#tab-a .gb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  aApplyRange(); aRebuildSel(); aBuild();
+}
+function aSR(n,btn){
+  aLR=n;
+  document.querySelectorAll('#tab-a .rb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const m=aMn();
+  if(n===0){aF=0;aT_=m.length-1;}else{aT_=m.length-1;aF=Math.max(0,aT_-n+1);}
+  aSyncSel(); aBuild();
+}
+function aApplyRange(){
+  const m=aMn();
+  if(aLR===0){aF=0;aT_=m.length-1;}else{aT_=m.length-1;aF=Math.max(0,aT_-aLR+1);}
+  document.querySelectorAll('#tab-a .rb').forEach(b=>b.classList.remove('active'));
+  const id=aLR===3?'aR3':aLR===6?'aR6':'aR0';
+  const el=document.getElementById(id);if(el)el.classList.add('active');
+  aSyncSel();
+}
+function aACC(){
+  const f=parseInt(document.getElementById('aSF').value);
+  const t=parseInt(document.getElementById('aST').value);
+  if(f<=t){aF=f;aT_=t;}aLR=-1;
+  document.querySelectorAll('#tab-a .rb').forEach(b=>b.classList.remove('active'));
+  aBuild();
+}
+function aSyncSel(){
+  const sf=document.getElementById('aSF'),st=document.getElementById('aST');
+  if(sf)sf.value=aF;if(st)st.value=aT_;
+}
+function aRebuildSel(){
+  const m=aMn();
+  document.getElementById('aSF').innerHTML=m.map((l,i)=>`<option value="${i}">${l}</option>`).join('');
+  document.getElementById('aST').innerHTML=m.map((l,i)=>`<option value="${i}"${i===m.length-1?' selected':''}>${l}</option>`).join('');
+  aSyncSel();
+}
+</script>
+</body>
+</html>
